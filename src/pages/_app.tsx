@@ -1,11 +1,17 @@
-import "../styles/globals.css";
 import type { AppProps } from "next/app";
-import { ChakraProvider } from "@chakra-ui/react";
+import { Box, ChakraProvider } from "@chakra-ui/react";
+import NavigationBar from "../components/NavigationBar";
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
     <ChakraProvider>
-      <Component {...pageProps} />
+      {/* Navigation bar */}
+      <NavigationBar />
+
+      {/* Content */}
+      <Box maxWidth={850} mx="auto">
+        <Component {...pageProps} />
+      </Box>
     </ChakraProvider>
   );
 }
