@@ -2,7 +2,7 @@ import type { AppProps } from "next/app";
 import { Box, ChakraProvider, extendTheme } from "@chakra-ui/react";
 import NavigationBar from "../components/NavigationBar";
 
-const theme = extendTheme({
+export const theme = extendTheme({
   config: { initialColorMode: "light", useSystemColorMode: true },
 });
 

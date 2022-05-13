@@ -10,6 +10,11 @@ import {
 import { MoonIcon, SunIcon } from "@chakra-ui/icons";
 import NLink from "next/link";
 
+const leftLinks = [
+  ["empa.xyz", "/"],
+  ["about", "/about"],
+];
+
 export default function NavigationBar(): JSX.Element {
   const { colorMode, toggleColorMode } = useColorMode();
 
@@ -33,10 +38,7 @@ export default function NavigationBar(): JSX.Element {
         justifyContent="space-between"
       >
         <HStack>
-          {[
-            ["empa.xyz", "/"],
-            ["about", "/about"],
-          ].map((link) => (
+          {leftLinks.map((link) => (
             <NLink href={link[1]} key={link[0]}>
               <Button>{link[0]}</Button>
             </NLink>
