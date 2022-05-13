@@ -8,6 +8,7 @@ import {
   useColorModeValue,
 } from "@chakra-ui/react";
 import { MoonIcon, SunIcon } from "@chakra-ui/icons";
+import NLink from "next/link";
 
 export default function NavigationBar(): JSX.Element {
   const { colorMode, toggleColorMode } = useColorMode();
@@ -32,7 +33,15 @@ export default function NavigationBar(): JSX.Element {
         justifyContent="space-between"
       >
         <HStack>
-          <Button>empa.xyz</Button>
+          {[
+            ["empa.xyz", "/"],
+            ["about", "/about"],
+          ].map((link) => (
+            <NLink href={link[1]} key={link[0]}>
+              <Button>{link[0]}</Button>
+            </NLink>
+          ))}
+          ;
         </HStack>
         <IconButton
           aria-label="Toggle between light and dark mode"
