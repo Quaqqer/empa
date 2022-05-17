@@ -19,6 +19,11 @@ const leftLinks = [
   ["about", "/about"],
 ];
 
+const gameLinks = [
+  ["snake", "/games/snake"],
+  ["game of life", "/games/gameoflife"],
+];
+
 export default function NavigationBar(): JSX.Element {
   const { colorMode, toggleColorMode } = useColorMode();
 
@@ -56,9 +61,11 @@ export default function NavigationBar(): JSX.Element {
 
             <PopoverContent border={0} boxShadow="xl" maxWidth="200px">
               <Stack>
-                <NLink href="/games/snake" passHref>
-                  <Button>snake</Button>
-                </NLink>
+                {gameLinks.map(([name, link], i) => (
+                  <NLink href={link} passHref key={i}>
+                    <Button>{name}</Button>
+                  </NLink>
+                ))}
               </Stack>
             </PopoverContent>
           </Popover>
