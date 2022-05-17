@@ -1,4 +1,4 @@
-import * as colors from "./colors";
+import { Theme, darkTheme } from "./colors";
 import { GameState } from "./gamestate";
 import { Point } from "./vector";
 
@@ -7,70 +7,69 @@ export const TILES_H = 24;
 export const TILES_V = 24;
 
 export class Renderer {
-  private ctx: CanvasRenderingContext2D;
-  constructor(private readonly gs: GameState, canvas: HTMLCanvasElement) {
-    const canvas2d = canvas.getContext("2d");
+  private nextTheme?: Theme;
 
-    if (canvas2d == null) {
-      throw new Error("Could not get canvas 2d rendering context");
-    }
+  constructor(
+    private readonly gs: GameState,
+    private theme: Theme = darkTheme
+  ) {}
 
-    this.ctx = canvas2d;
-
-    this.initalize();
+  private initalize(ctx: CanvasRenderingContext2D): void {
+    ctx.font = "30px Arial";
   }
 
-  private initalize(): void {
-    this.ctx.font = "30px Arial";
+  private drawTile(
+    ctx: CanvasRenderingContext2D,
+    pos: Point,
+    color: string
+  ): void {
+    ctx.beginPath();
+    ctx.rect(pos.x * TILE_SIZE, pos.y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+    ctx.fillStyle = color;
+    ctx.fill();
+    ctx.closePath();
   }
 
-  private drawTile(pos: Point, color: string): void {
-    this.ctx.beginPath();
-    this.ctx.rect(pos.x * TILE_SIZE, pos.y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
-    this.ctx.fillStyle = color;
-    this.ctx.fill();
-    this.ctx.closePath();
+  private drawBackground(ctx: CanvasRenderingContext2D): void {
+    ctx.beginPath();
+    ctx.rect(0, 0, this.gs.width * TILE_SIZE, this.gs.height * TILE_SIZE);
+    ctx.fillStyle = this.theme.background;
+    ctx.fill();
+    ctx.closePath();
+
+    ctx.beginPath();
+    ctx.rect(0, 480, 480, 50);
+    ctx.fillStyle = this.theme.wall;
+    ctx.fill();
+    ctx.closePath();
   }
 
-  private drawBackground(): void {
-    this.ctx.beginPath();
-    this.ctx.rect(0, 0, this.gs.width * TILE_SIZE, this.gs.height * TILE_SIZE);
-    this.ctx.fillStyle = colors.BACKGROUND;
-    this.ctx.fill();
-    this.ctx.closePath();
-
-    this.ctx.beginPath();
-    this.ctx.rect(0, 480, 480, 50);
-    this.ctx.fillStyle = colors.WALL;
-    this.ctx.fill();
-    this.ctx.closePath();
-  }
-
-  private drawSnake(): void {
-    this.drawTile(this.gs.snake.head, colors.SNAKE);
+  private drawSnake(ctx: CanvasRenderingContext2D): void {
+    this.drawTile(ctx, this.gs.snake.head, this.theme.snake);
 
     for (const segment of this.gs.snake.segments) {
-      this.drawTile(segment, colors.SNAKE);
+      this.drawTile(ctx, segment, this.theme.snake);
     }
   }
 
-  private drawFruit(): void {
+  private drawFruit(ctx: CanvasRenderingContext2D): void {
     for (const fruit of this.gs.fruit) {
-      this.drawTile(fruit, colors.FRUIT);
+      this.drawTile(ctx, fruit, this.theme.fruit);
     }
   }
 
-  private internal_render(): void {
-    this.drawBackground();
-    this.drawSnake();
-    this.drawFruit();
+  private internal_render(ctx: CanvasRenderingContext2D): void {
+    this.initalize(ctx);
+    this.drawBackground(ctx);
+    this.drawSnake(ctx);
+    this.drawFruit(ctx);
 
-    this.drawScore();
+    this.drawScore(ctx);
   }
 
-  drawScore(): void {
-    this.ctx.fillStyle = colors.FG;
-    this.ctx.fillText(
+  drawScore(ctx: CanvasRenderingContext2D): void {
+    ctx.fillStyle = this.theme.foreground;
+    ctx.fillText(
       "Score: " + this.gs.score.toString(),
       5,
       TILES_V * TILE_SIZE + 35,
@@ -78,9 +77,15 @@ export class Renderer {
     );
   }
 
-  public render(): void {
+  public render(ctx: CanvasRenderingContext2D): void {
+    if (this.nextTheme) this.theme = this.nextTheme;
+
     requestAnimationFrame(() => {
-      this.internal_render();
+      this.internal_render(ctx);
     });
+  }
+
+  public setTheme(theme: Theme): void {
+    this.nextTheme = theme;
   }
 }

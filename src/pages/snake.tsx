@@ -1,19 +1,27 @@
-import { useEffect, useRef } from "react";
+import { useColorMode } from "@chakra-ui/react";
+import { useEffect, useRef, useState } from "react";
 
-import { run as runSnake } from "../games/snake";
+import { Game } from "../games/snake";
+import { darkTheme, lightTheme } from "../games/snake/colors";
 
 export default function Snake(): JSX.Element {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const { colorMode } = useColorMode();
+  const [game] = useState(() => new Game());
 
   useEffect(() => {
-    const canvas = canvasRef.current;
+    const canvas2d = canvasRef.current?.getContext("2d");
 
-    if (canvas === null) {
-      throw new Error("Could not find canvas.");
+    if (canvas2d) {
+      const stopper = game.run(canvas2d);
+
+      return stopper;
     }
+  }, [game, canvasRef]);
 
-    return runSnake(canvas);
-  }, []);
+  useEffect(() => {
+    game.setTheme(colorMode === "light" ? lightTheme : darkTheme);
+  }, [game, colorMode]);
 
   return (
     <canvas

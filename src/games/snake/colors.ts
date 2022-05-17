@@ -1,5 +1,23 @@
-export const SNAKE = "#a3be8c";
-export const FRUIT = "#bf616a";
-export const BACKGROUND = "#3b4252";
-export const WALL = "#434c5e";
-export const FG = "#d8dee9";
+export type Theme = {
+  snake: string;
+  fruit: string;
+  foreground: string;
+  background: string;
+  wall: string;
+};
+
+export const darkTheme: Theme = {
+  snake: "#a3be8c",
+  fruit: "#bf616a",
+  background: "#3b4252",
+  wall: "#434c5e",
+  foreground: "#d8dee9",
+};
+
+export const lightTheme: Theme = {
+  snake: "#a3be8c",
+  fruit: "#bf616a",
+  background: "#f9fafb",
+  wall: "#4c566a",
+  foreground: "#3b4252",
+};
