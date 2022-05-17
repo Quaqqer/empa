@@ -9,8 +9,8 @@ export type Theme = {
 export const darkTheme: Theme = {
   snake: "#a3be8c",
   fruit: "#bf616a",
-  background: "#3b4252",
-  wall: "#434c5e",
+  background: "#434c5e",
+  wall: "#2e3440",
   foreground: "#d8dee9",
 };
 
@@ -18,6 +18,6 @@ export const lightTheme: Theme = {
   snake: "#a3be8c",
   fruit: "#bf616a",
   background: "#f9fafb",
-  wall: "#4c566a",
-  foreground: "#3b4252",
+  wall: "#434c5e",
+  foreground: "#eceff4",
 };

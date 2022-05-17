@@ -27,7 +27,7 @@ export default function Snake(): JSX.Element {
     <canvas
       ref={canvasRef}
       width="480px"
-      height="480px"
+      height={`${480 + 50}px`}
       style={{ margin: "auto", display: "block" }}
     />
   );
