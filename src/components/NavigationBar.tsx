@@ -4,6 +4,10 @@ import {
   Flex,
   HStack,
   IconButton,
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+  Stack,
   useColorMode,
   useColorModeValue,
 } from "@chakra-ui/react";
@@ -43,7 +47,21 @@ export default function NavigationBar(): JSX.Element {
               <Button>{link[0]}</Button>
             </NLink>
           ))}
-          ;
+
+          <Popover trigger="hover">
+            {/* @ts-ignore: Error with react 18 :-(, seems to work though */}
+            <PopoverTrigger>
+              <Button>games</Button>
+            </PopoverTrigger>
+
+            <PopoverContent border={0} boxShadow="xl" maxWidth="200px">
+              <Stack>
+                <NLink href="/games/snake" passHref>
+                  <Button>snake</Button>
+                </NLink>
+              </Stack>
+            </PopoverContent>
+          </Popover>
         </HStack>
         <IconButton
           aria-label="Toggle between light and dark mode"

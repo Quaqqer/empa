@@ -1,8 +1,8 @@
 import { useColorMode } from "@chakra-ui/react";
 import { useEffect, useRef, useState } from "react";
 
-import { Game } from "../games/snake";
-import { darkTheme, lightTheme } from "../games/snake/colors";
+import { Game } from "../../games/snake";
+import { darkTheme, lightTheme } from "../../games/snake/colors";
 
 export default function Snake(): JSX.Element {
   const canvasRef = useRef<HTMLCanvasElement>(null);
