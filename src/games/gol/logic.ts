@@ -2,7 +2,11 @@ import { range, sum } from "lodash";
 
 type GOLGrid = boolean[][];
 
-function newGrid(width: number, height: number, generator = () => false): GOLGrid {
+function newGrid(
+  width: number,
+  height: number,
+  generator = () => false
+): GOLGrid {
   return range(height).map(() => range(width).map(generator));
 }
 
