@@ -1,8 +1,8 @@
-import _, { range, sum } from "lodash";
+import { range, sum } from "lodash";
 
 type GOLGrid = boolean[][];
 
-function newGrid(width: number, height: number, generator = () => false) {
+function newGrid(width: number, height: number, generator = () => false): GOLGrid {
   return range(height).map(() => range(width).map(generator));
 }
 
@@ -56,12 +56,14 @@ export class GameOfLife {
   }
 
   public gridIter(): [boolean, number, number][] {
-    return this.state
-      .map((row, y) => row.map((v, x) => [v, x, y]))
-      .flat() as Array<[boolean, number, number]>;
+    return this.state.map((row, y) => row.map((v, x) => [v, x, y])).flat() as [
+      boolean,
+      number,
+      number
+    ][];
   }
 
-  public randomize() {
+  public randomize(): void {
     this.state = newGrid(this.width, this.height, () => Math.random() > 0.7);
   }
 }

@@ -12,7 +12,6 @@
     "@chakra-ui/react": "^1.8.8",
     "@emotion/react": "^11",
     "@emotion/styled": "^11",
-    "@types/lodash": "^4.14.182",
     "framer-motion": "^6",
     "lodash": "^4.17.21",
     "next": "12.1.6",
@@ -21,6 +20,7 @@
   },
   "devDependencies": {
     "@chakra-ui/icons": "^1.1.7",
+    "@types/lodash": "^4.14.182",
     "@types/node": "17.0.32",
     "@types/react": "18.0.9",
     "@types/react-dom": "18.0.3",

@@ -1,7 +1,7 @@
 import { Button, Center, Heading, Text } from "@chakra-ui/react";
 import Head from "next/head";
-import { ReactElement } from "react";
 import NLink from "next/link";
+import { ReactElement } from "react";
 
 export default function E404(): ReactElement {
   return (

@@ -1,5 +1,6 @@
 import { Box, Button, Center, HStack, useColorMode } from "@chakra-ui/react";
 import { useEffect, useRef, useState } from "react";
+
 import { darkTheme, Game, lightTheme } from "../../games/gol";
 
 export default function GameOfLife(): JSX.Element {
@@ -44,7 +45,7 @@ export default function GameOfLife(): JSX.Element {
           <Button
             onClick={() => {
               game.randomize();
-              game.render()
+              game.render();
             }}
           >
             Randomize

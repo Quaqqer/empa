@@ -17,7 +17,7 @@ export class Game {
   public run(renderCtx: CanvasRenderingContext2D): () => void {
     let running = true;
 
-    const runner = async () => {
+    const runner = async (): Promise<void> => {
       const window = document.defaultView;
 
       let timeout: NodeJS.Timeout;
@@ -51,7 +51,7 @@ export class Game {
       }
     };
 
-    const stopper = () => {
+    const stopper = (): void => {
       running = false;
     };
 

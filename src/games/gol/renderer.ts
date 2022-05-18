@@ -1,5 +1,6 @@
-import { Theme } from ".";
 import { GameOfLife } from "./logic";
+
+import { Theme } from ".";
 
 export function render(
   ctx: CanvasRenderingContext2D,

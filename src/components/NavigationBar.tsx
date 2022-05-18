@@ -1,3 +1,4 @@
+import { MoonIcon, SunIcon } from "@chakra-ui/icons";
 import {
   Box,
   Button,
@@ -11,7 +12,6 @@ import {
   useColorMode,
   useColorModeValue,
 } from "@chakra-ui/react";
-import { MoonIcon, SunIcon } from "@chakra-ui/icons";
 import NLink from "next/link";
 
 const leftLinks = [
@@ -54,6 +54,7 @@ export default function NavigationBar(): JSX.Element {
           ))}
 
           <Popover trigger="hover">
+            {/* eslint-disable-next-line */}
             {/* @ts-ignore: Error with react 18 :-(, seems to work though */}
             <PopoverTrigger>
               <Button>games</Button>

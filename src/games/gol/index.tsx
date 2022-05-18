@@ -32,18 +32,18 @@ export class Game {
     this.gol.tick();
   }
 
-  public setRenderCtx(ctx: CanvasRenderingContext2D) {
+  public setRenderCtx(ctx: CanvasRenderingContext2D): void {
     this.renderCtx = ctx;
   }
 
-  public render() {
+  public render(): void {
     if (this.renderCtx) {
       render(this.renderCtx, this.gol, this.theme);
     }
   }
 
-  public randomize() {
-    this.gol.randomize()
+  public randomize(): void {
+    this.gol.randomize();
   }
 
   public setTheme(theme: Theme): void {
