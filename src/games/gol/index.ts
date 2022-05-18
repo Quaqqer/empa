@@ -1,20 +1,6 @@
 import { GameOfLife } from "./logic";
 import { render } from "./renderer";
-
-export type Theme = {
-  cell: string;
-  background: string;
-};
-
-export const darkTheme: Theme = {
-  cell: "#d8dee9",
-  background: "#434c5e",
-};
-
-export const lightTheme: Theme = {
-  cell: "#434c5e",
-  background: "#eceff4",
-};
+import { lightTheme, Theme } from "./theme";
 
 export class Game {
   private gol: GameOfLife;

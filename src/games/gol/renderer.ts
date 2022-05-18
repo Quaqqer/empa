@@ -1,6 +1,8 @@
 import { GameOfLife } from "./logic";
+import { Theme } from "./theme";
 
-import { Theme } from ".";
+//           x       y       width   height
+type Rect = [number, number, number, number];
 
 export function render(
   ctx: CanvasRenderingContext2D,
@@ -11,7 +13,15 @@ export function render(
   const [cW, cH] = [canvasW / gol.width, canvasH / gol.height].map(Math.floor);
 
   gol.gridIter().map(([alive, x, y]) => {
-    drawCell(ctx, x, y, cW, cH, (alive && theme.cell) || theme.background);
+    drawCell(
+      ctx,
+      x,
+      y,
+      cW,
+      cH,
+      (alive && theme.cell) || theme.background,
+      theme.borders
+    );
   });
 }
 
@@ -21,11 +31,26 @@ function drawCell(
   y: number,
   cW: number,
   cH: number,
-  color: string
+  color: string,
+  borderColor?: string
 ): void {
+  const bigRect: Rect = [x * cW, y * cH, cW, cH];
+
   ctx.beginPath();
-  ctx.rect(x * cW, y * cH, cW, cH);
-  ctx.fillStyle = color;
-  ctx.fill();
+  ctx.fillStyle = borderColor ?? color;
+  ctx.fillRect(...bigRect);
   ctx.closePath();
+
+  if (borderColor) {
+    const smallRect: Rect = [
+      bigRect[0] + 1,
+      bigRect[1] + 1,
+      bigRect[2] - 2,
+      bigRect[3] - 2,
+    ];
+    ctx.beginPath();
+    ctx.fillStyle = color;
+    ctx.fillRect(...smallRect);
+    ctx.closePath();
+  }
 }

@@ -1,7 +1,8 @@
 import { Box, Button, Center, HStack, useColorMode } from "@chakra-ui/react";
 import { useEffect, useRef, useState } from "react";
 
-import { darkTheme, Game, lightTheme } from "../../games/gol";
+import { Game } from "../../games/gol";
+import { lightTheme, darkTheme } from "../../games/gol/theme";
 
 export default function GameOfLife(): JSX.Element {
   const { colorMode } = useColorMode();
