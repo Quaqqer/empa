@@ -22,7 +22,6 @@
     "eslint": "^8.15.0",
     "eslint-import-resolver-typescript": "^2.7.1",
     "eslint-plugin-import": "^2.26.0",
-    "fastify-tsconfig": "^1.0.1",
     "json-schema-to-typescript": "^10.1.5",
     "onchange": "^7.1.0",
     "prettier": "^2.6.2",
