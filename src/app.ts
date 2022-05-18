@@ -11,20 +11,13 @@ const app: FastifyPluginAsync<AppOptions> = async (
   fastify,
   opts
 ): Promise<void> => {
-  // Place here your custom code!
-
-  // Do not touch the following lines
-
-  // This loads all plugins defined in plugins
-  // those should be support plugins that are reused
-  // through your application
+  // Load all plugins/
   void fastify.register(AutoLoad, {
     dir: join(__dirname, "plugins"),
     options: opts,
   });
 
-  // This loads all plugins defined in routes
-  // define your routes in one of these
+  // Load all routes/
   void fastify.register(AutoLoad, {
     dir: join(__dirname, "routes"),
     options: opts,
@@ -32,4 +25,3 @@ const app: FastifyPluginAsync<AppOptions> = async (
 };
 
 export default app;
-export { app };
