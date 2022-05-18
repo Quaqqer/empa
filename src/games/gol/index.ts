@@ -24,7 +24,9 @@ export class Game {
 
   public render(): void {
     if (this.renderCtx) {
-      render(this.renderCtx, this.gol, this.theme);
+      requestAnimationFrame(() => {
+        if (this.renderCtx) render(this.renderCtx, this.gol, this.theme);
+      });
     }
   }
 
