@@ -30,16 +30,11 @@ export default function GameOfLife(): JSX.Element {
     let running = true;
 
     const runner = async (): Promise<void> => {
-      let timeout: NodeJS.Timeout;
-
       while (running) {
         game.tick();
         game.render();
 
-        await new Promise((r) => {
-          timeout = setTimeout(r, 200);
-          return timeout;
-        });
+        await new Promise((r) => setTimeout(r, 200));
       }
     };
 
