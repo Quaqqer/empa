@@ -38,8 +38,8 @@
     "watch:ts": "tsc -w",
     "dev": "npm run build && concurrently -k -p \"[{name}]\" -n \"TypeScript,App\" -c \"yellow.bold,cyan.bold\" \"npm:watch:ts\" \"npm:watch:compile-schemas\" \"npm:dev:start\"",
     "dev:start": "fastify start --ignore-watch=.ts$ -w -l info -P dist/app.js",
-    "compile-schemas": "json2ts -i 'schemas/*.json' -o schemas",
-    "watch:compile-schemas": "onchange 'schemas/*.json' -- npm run compile-schemas"
+    "compile-schemas": "json2ts -i 'src/schemas/*.json' -o src/types",
+    "watch:compile-schemas": "onchange 'src/schemas/*.json' -- npm run compile-schemas"
   },
   "prettier": {}
 }
