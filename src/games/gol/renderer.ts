@@ -25,21 +25,32 @@ export function render(
   });
 }
 
-function drawCell(
+function drawRect(
   ctx: CanvasRenderingContext2D,
   x: number,
   y: number,
+  w: number,
+  h: number,
+  color?: string
+): void {
+  ctx.beginPath();
+  if (color) ctx.fillStyle = color;
+  ctx.fillRect(x, y, w, h);
+  ctx.closePath();
+}
+
+function drawCell(
+  ctx: CanvasRenderingContext2D,
+  cX: number,
+  cY: number,
   cW: number,
   cH: number,
   color: string,
   borderColor?: string
 ): void {
-  const bigRect: Rect = [x * cW, y * cH, cW, cH];
+  const bigRect: Rect = [cX * cW, cY * cH, cW, cH];
 
-  ctx.beginPath();
-  ctx.fillStyle = borderColor ?? color;
-  ctx.fillRect(...bigRect);
-  ctx.closePath();
+  drawRect(ctx, ...bigRect, borderColor ?? color);
 
   if (borderColor) {
     const smallRect: Rect = [
@@ -48,9 +59,6 @@ function drawCell(
       bigRect[2] - 2,
       bigRect[3] - 2,
     ];
-    ctx.beginPath();
-    ctx.fillStyle = color;
-    ctx.fillRect(...smallRect);
-    ctx.closePath();
+    drawRect(ctx, ...smallRect, color);
   }
 }
