@@ -30,7 +30,7 @@ export class Game {
             this.gs.updateInput(e);
 
             // End timeout early
-            if (handler != null) {
+            if (handler) {
               clearTimeout(timeout);
               handler();
             }

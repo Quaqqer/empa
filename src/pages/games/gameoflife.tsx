@@ -1,5 +1,5 @@
 import { Box, Button, Center, HStack, useColorMode } from "@chakra-ui/react";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 import { Game } from "../../games/gol";
 import { lightTheme, darkTheme } from "../../games/gol/theme";
@@ -8,6 +8,8 @@ export default function GameOfLife(): JSX.Element {
   const { colorMode } = useColorMode();
 
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
+
+  const [animating, setAnimating] = useState(false);
 
   const [game] = useState(() => new Game(20, 20));
 
@@ -24,6 +26,34 @@ export default function GameOfLife(): JSX.Element {
     game.render();
   }, [colorMode, game]);
 
+  const animate = useCallback((game: Game) => {
+    let running = true;
+
+    const runner = async (): Promise<void> => {
+      let timeout: NodeJS.Timeout;
+
+      while (running) {
+        game.tick();
+        game.render();
+
+        await new Promise((r) => {
+          timeout = setTimeout(r, 200);
+          return timeout;
+        });
+      }
+    };
+
+    runner();
+
+    return () => {
+      running = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    if (animating) return animate(game);
+  }, [animate, game, animating]);
+
   return (
     <Center my={5}>
       <Box>
@@ -37,12 +67,22 @@ export default function GameOfLife(): JSX.Element {
         <HStack>
           <Button
             onClick={() => {
+              setAnimating(!animating);
+            }}
+          >
+            Animate
+          </Button>
+
+          <Button
+            isDisabled={animating}
+            onClick={() => {
               game.tick();
               game.render();
             }}
           >
             Tick
           </Button>
+
           <Button
             onClick={() => {
               game.randomize();
