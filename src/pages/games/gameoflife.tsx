@@ -49,6 +49,34 @@ export default function GameOfLife(): JSX.Element {
     if (animating) return animate(game);
   }, [animate, game, animating]);
 
+  useEffect(() => {
+    const canvas = canvasRef?.current;
+
+    const mouseEnter = (event: MouseEvent): void => {
+      game.setMouse({ x: event.x, y: event.y });
+    };
+
+    const mouseMoved = (event: MouseEvent): void => {
+      game.setMouse({ x: event.x, y: event.y });
+    };
+
+    const mouseLeave = (_event: MouseEvent): void => {
+      game.setMouse(undefined);
+    };
+
+    if (canvas) {
+      canvas.addEventListener("mouseenter", mouseEnter);
+      canvas.addEventListener("mousemove", mouseMoved);
+      canvas.addEventListener("mouseleave", mouseLeave);
+
+      return () => {
+        canvas.removeEventListener("mouseenter", mouseEnter);
+        canvas.removeEventListener("mousemove", mouseMoved);
+        canvas.removeEventListener("mouseleave", mouseLeave);
+      };
+    }
+  });
+
   return (
     <Center my={5}>
       <Box>

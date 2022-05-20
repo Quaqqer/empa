@@ -2,9 +2,15 @@ import { GameOfLife } from "./logic";
 import { render } from "./renderer";
 import { lightTheme, Theme } from "./theme";
 
+type Mouse = {
+  x: number;
+  y: number;
+};
+
 export class Game {
   private gol: GameOfLife;
   private renderCtx?: CanvasRenderingContext2D;
+  private mouse?: Mouse;
 
   public constructor(
     width: number,
@@ -36,5 +42,9 @@ export class Game {
 
   public setTheme(theme: Theme): void {
     this.theme = theme;
+  }
+
+  public setMouse(mouse?: Mouse): void {
+    this.mouse = mouse;
   }
 }
