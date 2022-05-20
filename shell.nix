@@ -1,3 +1,3 @@
 { pkgs ? import <nixpkgs> { } }:
 
-pkgs.mkShell { buildInputs = with pkgs; [ yarn ]; }
+pkgs.mkShell { buildInputs = with pkgs; [ yarn sqlite ]; }
