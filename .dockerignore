@@ -1,0 +1,22 @@
+# Build directories
+**/dist/
+**/.next/
+
+# Database
+**/*.sqlite/
+
+# Node modules
+**/node_modules/
+
+# Env
+
+**/.env
+**/.envrc
+
+# Tests
+**/coverage/
+**/.nyc_output/
+
+# Docker
+docker-compose.yml
+Dockerfile

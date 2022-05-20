@@ -1,0 +1,11 @@
+{
+  "name": "empa.xyz",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "concurrently": "^7.2.0"
+  },
+  "scripts": {
+    "start": "concurrently -k -n frontend,backend 'cd frontend && yarn start' 'cd backend && yarn start'"
+  }
+}

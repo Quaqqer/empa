@@ -7,7 +7,7 @@ import fp from "fastify-plugin";
  * @see https://github.com/fastify/fastify-sensible
  */
 export default fp<SensibleOptions>(async (fastify, _opts) => {
-  fastify.register(sensible, {
+  await fastify.register(sensible, {
     errorHandler: false,
   });
 });

@@ -1,0 +1,7 @@
+services:
+  empa.xyz:
+    container_name: empa.xyz
+    build: .
+    environment: [TZ=Europe/Stockholm]
+    ports: ["3000:3000"]
+    restart: unless-stopped

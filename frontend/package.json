@@ -1,5 +1,5 @@
 {
-  "name": "empa.xyz",
+  "name": "empa.xyz-frontend",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -31,60 +31,5 @@
     "prettier": "^2.6.2",
     "typescript": "4.6.4"
   },
-  "prettier": {},
-  "eslintConfig": {
-    "root": true,
-    "extends": [
-      "next/core-web-vitals",
-      "eslint:recommended",
-      "plugin:@typescript-eslint/recommended",
-      "plugin:import/recommended",
-      "plugin:import/typescript"
-    ],
-    "plugins": [
-      "import",
-      "@typescript-eslint"
-    ],
-    "rules": {
-      "prefer-const": "warn",
-      "no-constant-condition": [
-        "warn",
-        {
-          "checkLoops": false
-        }
-      ],
-      "no-var": "warn",
-      "no-lonely-if": "warn",
-      "prefer-spread": "warn",
-      "import/order": [
-        "warn",
-        {
-          "newlines-between": "always",
-          "alphabetize": {
-            "order": "asc",
-            "caseInsensitive": true
-          }
-        }
-      ],
-      "@typescript-eslint/array-type": [
-        "warn",
-        {
-          "default": "array"
-        }
-      ],
-      "@typescript-eslint/no-explicit-any": [
-        "warn",
-        {
-          "fixToUnknown": false,
-          "ignoreRestArgs": true
-        }
-      ],
-      "@typescript-eslint/explicit-function-return-type": [
-        "warn",
-        {
-          "allowExpressions": true
-        }
-      ]
-    }
-  }
+  "prettier": {}
 }

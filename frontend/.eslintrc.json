@@ -1,13 +1,8 @@
 {
   "root": true,
-  "ignorePatterns": ["dist/"],
   "plugins": ["import", "@typescript-eslint"],
-  "settings": {
-    "import/resolver": {
-      "typescript": {}
-    }
-  },
   "extends": [
+    "next/core-web-vitals",
     "eslint:recommended",
     "plugin:@typescript-eslint/recommended",
     "plugin:import/recommended",
@@ -18,6 +13,12 @@
     "no-var": "warn",
     "no-lonely-if": "warn",
     "prefer-spread": "warn",
+    "no-constant-condition": [
+      "warn",
+      {
+        "checkLoops": false
+      }
+    ],
     "import/order": [
       "warn",
       {
@@ -50,6 +51,12 @@
       {
         "fixToUnknown": false,
         "ignoreRestArgs": true
+      }
+    ],
+    "@typescript-eslint/explicit-function-return-type": [
+      "warn",
+      {
+        "allowExpressions": true
       }
     ]
   }
