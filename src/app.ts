@@ -1,6 +1,6 @@
 import { join } from "path";
 
-import AutoLoad, { AutoloadPluginOptions } from "@fastify/autoload";
+import autoLoad, { AutoloadPluginOptions } from "@fastify/autoload";
 import { FastifyPluginAsync } from "fastify";
 
 export type AppOptions = {
@@ -12,13 +12,13 @@ const app: FastifyPluginAsync<AppOptions> = async (
   opts
 ): Promise<void> => {
   // Load all plugins/
-  fastify.register(AutoLoad, {
+  fastify.register(autoLoad, {
     dir: join(__dirname, "plugins"),
     options: opts,
   });
 
   // Load all routes/
-  fastify.register(AutoLoad, {
+  fastify.register(autoLoad, {
     dir: join(__dirname, "routes"),
     options: opts,
   });
