@@ -163,9 +163,11 @@ export function SnakeScoreboard({ scores }: SnakeScoreboardProps): JSX.Element {
       <Table variant="simple" size="sm">
         <TableCaption placement="top">Leaderboard</TableCaption>
         <Thead>
-          <Th>#</Th>
-          <Th>Name</Th>
-          <Th>Score</Th>
+          <Tr>
+            <Th>#</Th>
+            <Th>Name</Th>
+            <Th>Score</Th>
+          </Tr>
         </Thead>
         <Tbody>
           {scores.map(({ id, name, score }, index) => (
