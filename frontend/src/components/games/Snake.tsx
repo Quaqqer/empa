@@ -33,7 +33,11 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { Game } from "../../games/snake";
 import { darkTheme, lightTheme } from "../../games/snake/colors";
 
-export default function Snake(): JSX.Element {
+export type SnakeProps = {
+  scores: SnakeScore[];
+};
+
+export default function Snake({ scores }: SnakeProps): JSX.Element {
   /** Initialize the game */
   const [game] = useState(
     new Game((score) => {
@@ -44,34 +48,13 @@ export default function Snake(): JSX.Element {
   /** The current score in the dialog */
   const [score, setScore] = useState<number | undefined>();
 
-  /** The scores in the scoreboard */
-  const [scoreBoard, setScoreBoard] = useState<SnakeScore[]>([]);
-
-  /**
-   * Update the leaderboard
-   */
-  const updateLeaderboard = useCallback(() => {
-    fetch("/api/snake/leaderboard").then((response) => {
-      if (response.ok) {
-        response.json().then((json) => {
-          setScoreBoard(json);
-        });
-      }
-    });
-  }, []);
-
-  // Update leaderboard when opening site
-  useEffect(() => {
-    updateLeaderboard();
-  }, [updateLeaderboard]);
-
   return (
     <>
       <SnakeGame {...{ game, running: score === undefined }} />
 
       {/* Scoreboard */}
       <Center>
-        <SnakeScoreboard scores={scoreBoard} />
+        <SnakeScoreboard {...{ scores }} />
       </Center>
 
       {/* Dialog for when you die */}

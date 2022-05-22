@@ -27,8 +27,7 @@ COPY frontend /empa.xyz/frontend
 COPY backend /empa.xyz/backend
 
 # Install dependencies and build projects
-RUN cd frontend && yarn build
-RUN cd backend && yarn build
+RUN yarn build
 
 # Run frontend and backend concurrently
 CMD yarn start

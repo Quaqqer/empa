@@ -6,6 +6,7 @@
     "concurrently": "^7.2.0"
   },
   "scripts": {
+    "build": "concurrently -k -n frontend,backend 'cd frontend && yarn build' 'cd backend && yarn build'",
     "start": "concurrently -k -n frontend,backend 'cd frontend && yarn start' 'cd backend && yarn start'",
     "dev": "concurrently -k -n frontend,backend 'cd frontend && yarn dev' 'cd backend && yarn dev'"
   }
