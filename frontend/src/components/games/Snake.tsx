@@ -67,7 +67,7 @@ export default function Snake(): JSX.Element {
 
   return (
     <>
-      <SnakeRenderer {...{ game }} />
+      <SnakeGame {...{ game, running: score === undefined }} />
 
       {/* Scoreboard */}
       <Center>
@@ -94,26 +94,31 @@ export default function Snake(): JSX.Element {
 type SnakeCanvasProps = {
   /** The game that will be drawn */
   game: Game;
+
+  /** If the game should be running */
+  running: boolean;
 };
 
 /**
  * A component for the snake game to draw on
  */
-export function SnakeRenderer({ game }: SnakeCanvasProps): JSX.Element {
+export function SnakeGame({ game, running }: SnakeCanvasProps): JSX.Element {
   const { colorMode } = useColorMode();
   /** The canvas reference */
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
-  // Start the game on the canvas
+  // Start the game on the canvas, if should be running
   useEffect(() => {
-    const canvas2d = canvasRef.current?.getContext("2d");
+    if (running) {
+      const canvas2d = canvasRef.current?.getContext("2d");
 
-    if (canvas2d) {
-      const stopper = game.run(canvas2d);
+      if (canvas2d) {
+        const stopper = game.run(canvas2d);
 
-      return stopper;
+        return stopper;
+      }
     }
-  }, [game, canvasRef]);
+  }, [game, canvasRef, running]);
 
   // Reflect global theme
   useEffect(() => {
@@ -121,12 +126,14 @@ export function SnakeRenderer({ game }: SnakeCanvasProps): JSX.Element {
   }, [game, colorMode]);
 
   return (
-    <canvas
-      ref={canvasRef}
-      width="480px"
-      height={`${480 + 50}px`}
-      style={{ margin: "auto", display: "block" }}
-    />
+    <Box>
+      <canvas
+        ref={canvasRef}
+        width="480px"
+        height={`${480 + 50}px`}
+        style={{ margin: "auto", display: "block" }}
+      />
+    </Box>
   );
 }
 
