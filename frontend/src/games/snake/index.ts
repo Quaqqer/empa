@@ -6,7 +6,7 @@ export class Game {
   private renderer: Renderer;
   private gs: GameState;
 
-  public constructor() {
+  public constructor(private endGame: (score: number) => void) {
     const width = TILES_H;
     const height = TILES_V;
 
