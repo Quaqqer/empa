@@ -16,29 +16,32 @@ export class Game {
     this.renderer = new Renderer(this.gs);
   }
 
-  public run(renderCtx: CanvasRenderingContext2D): () => void {
+  public run(
+    renderCtx: CanvasRenderingContext2D,
+    canvas: HTMLCanvasElement
+  ): () => void {
     let running = true;
+
+    let timeout: NodeJS.Timeout;
+    let handler: ((v?: unknown) => void) | null = null;
+
+    const keydownListener = (e: KeyboardEvent): void => {
+      this.gs.updateInput(e);
+
+      // End timeout early
+      if (handler) {
+        clearTimeout(timeout);
+        handler();
+      }
+
+      e.preventDefault();
+    };
 
     const runner = async (): Promise<void> => {
       const window = document.defaultView;
 
-      let timeout: NodeJS.Timeout;
-      let handler: ((v?: unknown) => void) | null = null;
-
       if (window) {
-        window.addEventListener(
-          "keydown",
-          (e) => {
-            this.gs.updateInput(e);
-
-            // End timeout early
-            if (handler) {
-              clearTimeout(timeout);
-              handler();
-            }
-          },
-          false
-        );
+        canvas.addEventListener("keydown", keydownListener);
 
         while (running) {
           this.gs.update();
@@ -61,6 +64,7 @@ export class Game {
     };
 
     const stopper = (): void => {
+      canvas.removeEventListener("keydown", keydownListener);
       running = false;
     };
 

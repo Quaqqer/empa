@@ -104,16 +104,18 @@ type SnakeCanvasProps = {
  */
 export function SnakeGame({ game, running }: SnakeCanvasProps): JSX.Element {
   const { colorMode } = useColorMode();
+
   /** The canvas reference */
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   // Start the game on the canvas, if should be running
   useEffect(() => {
     if (running) {
-      const canvas2d = canvasRef.current?.getContext("2d");
+      const canvas = canvasRef.current;
+      const canvas2d = canvas?.getContext("2d");
 
-      if (canvas2d) {
-        const stopper = game.run(canvas2d);
+      if (canvas && canvas2d) {
+        const stopper = game.run(canvas2d, canvas);
 
         return stopper;
       }
@@ -126,14 +128,13 @@ export function SnakeGame({ game, running }: SnakeCanvasProps): JSX.Element {
   }, [game, colorMode]);
 
   return (
-    <Box>
-      <canvas
-        ref={canvasRef}
-        width="480px"
-        height={`${480 + 50}px`}
-        style={{ margin: "auto", display: "block" }}
-      />
-    </Box>
+    <canvas
+      ref={canvasRef}
+      tabIndex={1}
+      width="480px"
+      height={`${480 + 50}px`}
+      style={{ margin: "auto", display: "block" }}
+    />
   );
 }
 
