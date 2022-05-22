@@ -317,6 +317,14 @@
     fastify-plugin "^3.0.0"
     vary "^1.1.2"
 
+"@fastify/env@^3.0.0":
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/@fastify/env/-/env-3.0.0.tgz#3895c591b723b8c09f7382426718b477904cd58c"
+  integrity sha512-WRX4Mnt175P2YdgFYHMsTXff1xi3iNW7DeRnKJwFSlzGKWJDEP7ZL7eQCmUeqmCuznZrmITlgznu/+FR4cNDPA==
+  dependencies:
+    env-schema "^4.0.0"
+    fastify-plugin "^3.0.0"
+
 "@fastify/error@^2.0.0":
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/@fastify/error/-/error-2.0.0.tgz#a9f94af56eb934f0ab1ce4ef9f0ced6ebf2319dc"
@@ -660,7 +668,7 @@ ajv@^6.10.0, ajv@^6.11.0, ajv@^6.12.4, ajv@^6.12.6:
     json-schema-traverse "^0.4.1"
     uri-js "^4.2.2"
 
-ajv@^8.1.0:
+ajv@^8.0.0, ajv@^8.1.0:
   version "8.11.0"
   resolved "https://registry.yarnpkg.com/ajv/-/ajv-8.11.0.tgz#977e91dd96ca669f54a11e23e378e33b884a565f"
   integrity sha512-wGgprdCvMalC0BztXvitD2hC04YffAvtsUn93JbGXYLAtCUO4xd17mCCZQxUOItiBwZvJScWo8NIvQMQ71rdpg==
@@ -1306,6 +1314,11 @@ doctrine@^3.0.0:
   dependencies:
     esutils "^2.0.2"
 
+dotenv-expand@^8.0.3:
+  version "8.0.3"
+  resolved "https://registry.yarnpkg.com/dotenv-expand/-/dotenv-expand-8.0.3.tgz#29016757455bcc748469c83a19b36aaf2b83dd6e"
+  integrity sha512-SErOMvge0ZUyWd5B0NXMQlDkN+8r+HhVUsxgOO7IoPDOdDRD2JjExpN6y3KnFR66jsJMwSn1pqIivhU5rcJiNg==
+
 dotenv@^16.0.0:
   version "16.0.1"
   resolved "https://registry.yarnpkg.com/dotenv/-/dotenv-16.0.1.tgz#8f8f9d94876c35dac989876a5d3a82a267fdce1d"
@@ -1327,6 +1340,15 @@ end-of-stream@^1.1.0, end-of-stream@^1.4.1:
   integrity sha512-+uw1inIHVPQoaVuHzRyXd21icM+cnt4CzD5rW+NC1wjOUSTOs+Te7FOv7AhN7vS9x/oIyhLP5PR1H+phQAHu5Q==
   dependencies:
     once "^1.4.0"
+
+env-schema@^4.0.0:
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/env-schema/-/env-schema-4.0.0.tgz#bb51550af5bcd715502c056c44a16dc7b3a91237"
+  integrity sha512-hM5OwjrUPxxrCjC1Ykf+wPld2lbnN3/m9Y9wuMPt0jmYluJpAV3OXc1HiliZxFkxLzw2FcrSOXdw/3uI7PYCFA==
+  dependencies:
+    ajv "^8.0.0"
+    dotenv "^16.0.0"
+    dotenv-expand "^8.0.3"
 
 es-abstract@^1.19.0, es-abstract@^1.19.1, es-abstract@^1.19.2, es-abstract@^1.19.5:
   version "1.20.1"

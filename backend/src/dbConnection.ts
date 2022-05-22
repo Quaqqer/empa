@@ -5,8 +5,7 @@ const migrationFilename = /([1-9]\d*)_.*\.sql/;
 
 import BetterSqlite3, { Database } from "better-sqlite3";
 
-function createDb(): Database {
-  const dbPath = "db.sqlite";
+function createDb(dbPath: string): Database {
   return new BetterSqlite3(dbPath);
 }
 
