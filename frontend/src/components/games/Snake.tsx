@@ -16,29 +16,41 @@ import {
   ModalContent,
   ModalHeader,
   ModalOverlay,
-  Stack,
+  Table,
+  TableCaption,
+  TableContainer,
+  Tbody,
+  Td,
   Text,
+  Th,
+  Thead,
+  Tr,
   useColorMode,
   useToast,
 } from "@chakra-ui/react";
-import { RefObject, useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 import { Game } from "../../games/snake";
 import { darkTheme, lightTheme } from "../../games/snake/colors";
 
 export default function Snake(): JSX.Element {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-
+  /** Initialize the game */
   const [game] = useState(
     new Game((score) => {
       setScore(score);
     })
   );
+
+  /** The current score in the dialog */
   const [score, setScore] = useState<number | undefined>();
 
+  /** The scores in the scoreboard */
   const [scoreBoard, setScoreBoard] = useState<SnakeScore[]>([]);
 
-  useEffect(() => {
+  /**
+   * Update the leaderboard
+   */
+  const updateLeaderboard = useCallback(() => {
     fetch("/api/snake/leaderboard").then((response) => {
       if (response.ok) {
         response.json().then((json) => {
@@ -48,12 +60,19 @@ export default function Snake(): JSX.Element {
     });
   }, []);
 
+  // Update leaderboard when opening site
+  useEffect(() => {
+    updateLeaderboard();
+  }, [updateLeaderboard]);
+
   return (
     <>
-      <SnakeRenderer {...{ game, canvasRef }} />
+      <SnakeRenderer {...{ game }} />
 
       {/* Scoreboard */}
-      <SnakeScoreboard scores={scoreBoard} />
+      <Center>
+        <SnakeScoreboard scores={scoreBoard} />
+      </Center>
 
       {/* Dialog for when you die */}
       <GameOverDialog
@@ -75,19 +94,16 @@ export default function Snake(): JSX.Element {
 type SnakeCanvasProps = {
   /** The game that will be drawn */
   game: Game;
-
-  /** The canvas to draw on */
-  canvasRef: RefObject<HTMLCanvasElement>;
 };
 
 /**
  * A component for the snake game to draw on
  */
-export function SnakeRenderer({
-  game,
-  canvasRef,
-}: SnakeCanvasProps): JSX.Element {
+export function SnakeRenderer({ game }: SnakeCanvasProps): JSX.Element {
   const { colorMode } = useColorMode();
+  /** The canvas reference */
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+
   // Start the game on the canvas
   useEffect(() => {
     const canvas2d = canvasRef.current?.getContext("2d");
@@ -135,15 +151,25 @@ type SnakeScoreboardProps = {
  */
 export function SnakeScoreboard({ scores }: SnakeScoreboardProps): JSX.Element {
   return (
-    <Stack>
-      {scores.map(({ id, name, score }) => (
-        <Box key={id}>
-          <Text>
-            {name} - {score}
-          </Text>
-        </Box>
-      ))}
-    </Stack>
+    <TableContainer minWidth="400px">
+      <Table variant="simple" size="sm">
+        <TableCaption placement="top">Leaderboard</TableCaption>
+        <Thead>
+          <Th>#</Th>
+          <Th>Name</Th>
+          <Th>Score</Th>
+        </Thead>
+        <Tbody>
+          {scores.map(({ id, name, score }, index) => (
+            <Tr key={id}>
+              <Td>{index + 1}</Td>
+              <Td>{name}</Td>
+              <Td>{score}</Td>
+            </Tr>
+          ))}
+        </Tbody>
+      </Table>
+    </TableContainer>
   );
 }
 
