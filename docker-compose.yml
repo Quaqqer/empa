@@ -1,15 +1,7 @@
 services:
   empa.xyz:
-    image: ghcr.io/quaqqer/empa:main
     container_name: empa.xyz
+    build: .
     environment: [TZ=Europe/Stockholm]
     ports: ["3000:3000"]
-    restart: unless-stopped
-  ouroboros:
-    image: pyouroboros/ouroboros
-    container_name: empa.xyz_ouroboros
-    environment:
-      - MONITOR=empa.xyz
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
     restart: unless-stopped
