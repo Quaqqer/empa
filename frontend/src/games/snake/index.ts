@@ -46,6 +46,7 @@ export class Game {
           if (this.gs.snake.isDead) {
             this.endGame(this.gs.score);
             this.gs = new GameState(this.width, this.height);
+            this.renderer = new Renderer(this.gs);
           }
 
           this.renderer.render(renderCtx);

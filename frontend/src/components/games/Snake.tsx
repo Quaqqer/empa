@@ -39,10 +39,9 @@ export default function Snake(): JSX.Element {
   const [scoreBoard, setScoreBoard] = useState<SnakeScore[]>([]);
 
   useEffect(() => {
-    fetch("/api/snake/scores").then((response) => {
+    fetch("/api/snake/leaderboard").then((response) => {
       if (response.ok) {
         response.json().then((json) => {
-          console.log(json);
           setScoreBoard(json);
         });
       }
@@ -167,7 +166,7 @@ export function GameOverDialog({
     async (name: string, score: number) => {
       onClose();
 
-      const response = await fetch("/api/snake/scores", {
+      const response = await fetch("/api/snake/score", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name, score }),
