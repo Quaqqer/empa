@@ -6,6 +6,7 @@
  */
 
 export type SnakeScores = {
+  id: number;
   name: string;
   score: number;
 }[];

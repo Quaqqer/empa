@@ -5,7 +5,9 @@ import * as SnakeScores from "../../schemas/SnakeScores.json";
 import { PostSnakeScore as PostSnakeScoreType } from "../../types/PostSnakeScore";
 
 const snakePlugin: FastifyPluginAsync = async (fastify) => {
-  const getScores = fastify.db.prepare("SELECT name, score FROM SnakeScores");
+  const getScores = fastify.db.prepare(
+    "SELECT name, score, rowid as id FROM SnakeScores"
+  );
   const putScore = fastify.db.prepare(
     "INSERT INTO SnakeScores (name, score) VALUES (?, ?)"
   );

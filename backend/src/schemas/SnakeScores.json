@@ -3,10 +3,11 @@
   "items": {
     "type": "object",
     "properties": {
+      "id": { "type": "number" },
       "name": { "type": "string" },
       "score": { "type": "number" }
     },
-    "required": ["name", "score"],
+    "required": ["id", "name", "score"],
     "additionalProperties": false
   }
 }

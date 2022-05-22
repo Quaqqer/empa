@@ -5,12 +5,14 @@ import { TILES_H, TILES_V, Renderer } from "./renderer";
 export class Game {
   private renderer: Renderer;
   private gs: GameState;
+  private width: number;
+  private height: number;
 
   public constructor(private endGame: (score: number) => void) {
-    const width = TILES_H;
-    const height = TILES_V;
+    this.width = TILES_H;
+    this.height = TILES_V;
 
-    this.gs = new GameState(width, height);
+    this.gs = new GameState(this.width, this.height);
     this.renderer = new Renderer(this.gs);
   }
 
@@ -40,6 +42,12 @@ export class Game {
 
         while (running) {
           this.gs.update();
+
+          if (this.gs.snake.isDead) {
+            this.endGame(this.gs.score);
+            this.gs = new GameState(this.width, this.height);
+          }
+
           this.renderer.render(renderCtx);
 
           await new Promise((r) => {
