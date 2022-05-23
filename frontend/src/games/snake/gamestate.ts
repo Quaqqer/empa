@@ -131,20 +131,22 @@ export class GameState {
     return eaten > 0;
   }
 
-  public updateInput(e: KeyboardEvent): void {
+  public updateInput(e: KeyboardEvent): boolean {
     switch (e.key) {
       case "ArrowUp":
         this.snake.dir = Direction.Up;
-        break;
+        return true;
       case "ArrowDown":
         this.snake.dir = Direction.Down;
-        break;
+        return true;
       case "ArrowLeft":
         this.snake.dir = Direction.Left;
-        break;
+        return true;
       case "ArrowRight":
         this.snake.dir = Direction.Right;
-        break;
+        return true;
+      default:
+        return false;
     }
   }
 

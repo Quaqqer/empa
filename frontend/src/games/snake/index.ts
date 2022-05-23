@@ -26,15 +26,17 @@ export class Game {
     let handler: ((v?: unknown) => void) | null = null;
 
     const keydownListener = (e: KeyboardEvent): void => {
-      this.gs.updateInput(e);
+      const updated = this.gs.updateInput(e);
 
-      // End timeout early
-      if (handler) {
-        clearTimeout(timeout);
-        handler();
+      if (updated) {
+        // End timeout early
+        if (handler) {
+          clearTimeout(timeout);
+          handler();
+        }
+
+        e.preventDefault();
       }
-
-      e.preventDefault();
     };
 
     const runner = async (): Promise<void> => {
