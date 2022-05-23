@@ -134,14 +134,18 @@ export class GameState {
   public updateInput(e: KeyboardEvent): boolean {
     switch (e.key) {
       case "ArrowUp":
+      case "k":
         this.snake.dir = Direction.Up;
         return true;
       case "ArrowDown":
+      case "j":
         this.snake.dir = Direction.Down;
         return true;
       case "ArrowLeft":
+      case "h":
         this.snake.dir = Direction.Left;
         return true;
+      case "l":
       case "ArrowRight":
         this.snake.dir = Direction.Right;
         return true;
