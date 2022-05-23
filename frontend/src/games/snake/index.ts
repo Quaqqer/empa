@@ -48,8 +48,14 @@ export class Game {
 
           if (this.gs.snake.isDead) {
             this.endGame(this.gs.score);
+
+            // Create new gamestate
             this.gs = new GameState(this.width, this.height);
+
+            // Create new renderer, persist old theme
+            const oldTheme = this.renderer.theme;
             this.renderer = new Renderer(this.gs);
+            this.renderer.setTheme(oldTheme);
           }
 
           this.renderer.render(renderCtx);

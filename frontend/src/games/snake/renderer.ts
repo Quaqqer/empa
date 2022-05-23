@@ -11,7 +11,7 @@ export class Renderer {
 
   constructor(
     private readonly gs: GameState,
-    private theme: Theme = darkTheme
+    public theme: Theme = darkTheme
   ) {}
 
   private initalize(ctx: CanvasRenderingContext2D): void {
