@@ -142,15 +142,15 @@ type SnakeScoreboardProps = {
  */
 export function SnakeScoreboard({ scores }: SnakeScoreboardProps): JSX.Element {
   return (
-    <TableContainer minWidth="400px">
+    <TableContainer m={2}>
       <Table variant="simple" size="sm">
         <TableCaption placement="top">Leaderboard</TableCaption>
 
         <Thead>
           <Tr>
-            <Th>#</Th>
+            <Th isNumeric>#</Th>
             <Th>Name</Th>
-            <Th>Score</Th>
+            <Th isNumeric>Score</Th>
           </Tr>
         </Thead>
         <Tbody>
