@@ -27,6 +27,8 @@ import {
   Tr,
   useColorMode,
   useToast,
+  Wrap,
+  WrapItem,
 } from "@chakra-ui/react";
 import { useCallback, useEffect, useRef, useState } from "react";
 
@@ -50,12 +52,18 @@ export default function Snake({ scores }: SnakeProps): JSX.Element {
 
   return (
     <>
-      <SnakeGame {...{ game, running: score === undefined }} />
+      <Wrap justify="center" minWidth="480px">
+        <WrapItem>
+          <SnakeGame {...{ game, running: score === undefined }} />
+        </WrapItem>
+
+        <WrapItem>
+          <SnakeScoreboard {...{ scores }} />
+        </WrapItem>
+      </Wrap>
 
       {/* Scoreboard */}
-      <Center>
-        <SnakeScoreboard {...{ scores }} />
-      </Center>
+      <Center></Center>
 
       {/* Dialog for when you die */}
       <GameOverDialog
@@ -116,7 +124,6 @@ export function SnakeGame({ game, running }: SnakeCanvasProps): JSX.Element {
       tabIndex={1}
       width="480px"
       height={`${480 + 50}px`}
-      style={{ margin: "auto", display: "block" }}
     />
   );
 }
