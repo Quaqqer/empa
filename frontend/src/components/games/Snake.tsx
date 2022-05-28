@@ -145,6 +145,7 @@ export function SnakeScoreboard({ scores }: SnakeScoreboardProps): JSX.Element {
     <TableContainer minWidth="400px">
       <Table variant="simple" size="sm">
         <TableCaption placement="top">Leaderboard</TableCaption>
+
         <Thead>
           <Tr>
             <Th>#</Th>
@@ -155,9 +156,9 @@ export function SnakeScoreboard({ scores }: SnakeScoreboardProps): JSX.Element {
         <Tbody>
           {scores.map(({ id, name, score }, index) => (
             <Tr key={id}>
-              <Td>{index + 1}</Td>
+              <Td isNumeric>{index + 1}</Td>
               <Td>{name}</Td>
-              <Td>{score}</Td>
+              <Td isNumeric>{score}</Td>
             </Tr>
           ))}
         </Tbody>
