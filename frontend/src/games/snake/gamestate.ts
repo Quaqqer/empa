@@ -8,6 +8,21 @@ export enum Direction {
   None,
 }
 
+export function oppositeDir(dir: Direction): Direction {
+  switch (dir) {
+    case Direction.Up:
+      return Direction.Down;
+    case Direction.Down:
+      return Direction.Up;
+    case Direction.Left:
+      return Direction.Right;
+    case Direction.Right:
+      return Direction.Left;
+    default:
+      return Direction.None;
+  }
+}
+
 function dirToVec(dir: Direction): Vector2 {
   switch (dir) {
     case Direction.Up:
@@ -132,26 +147,31 @@ export class GameState {
   }
 
   public updateInput(e: KeyboardEvent): boolean {
-    switch (e.key) {
-      case "ArrowUp":
-      case "k":
-        this.snake.dir = Direction.Up;
-        return true;
-      case "ArrowDown":
-      case "j":
-        this.snake.dir = Direction.Down;
-        return true;
-      case "ArrowLeft":
-      case "h":
-        this.snake.dir = Direction.Left;
-        return true;
-      case "l":
-      case "ArrowRight":
-        this.snake.dir = Direction.Right;
-        return true;
-      default:
-        return false;
+    const cdir = this.snake.dir;
+    const [ndir, captured]: [Direction, boolean] = (() => {
+      switch (e.key) {
+        case "ArrowUp":
+        case "k":
+          return [Direction.Up, true];
+        case "ArrowDown":
+        case "j":
+          return [Direction.Down, true];
+        case "ArrowLeft":
+        case "h":
+          return [Direction.Left, true];
+        case "l":
+        case "ArrowRight":
+          return [Direction.Right, true];
+        default:
+          return [Direction.None, false];
+      }
+    })();
+
+    if (ndir !== Direction.None && ndir !== oppositeDir(cdir)) {
+      this.snake.dir = ndir;
     }
+
+    return captured;
   }
 
   public updateTime(): number {
