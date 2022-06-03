@@ -14,7 +14,7 @@ function MyApp({ Component, pageProps }: AppProps): JSX.Element {
       <NavigationBar />
 
       {/* Content */}
-      <Box maxWidth={850} mx="auto">
+      <Box maxWidth={850} p={2} mx="auto">
         <Component {...pageProps} />
       </Box>
     </ChakraProvider>
