@@ -1,6 +1,5 @@
 import { Database } from "better-sqlite3";
-
-import { Env } from "../types/Env";
+import { Env } from "empa-schemas";
 
 declare module "fastify" {
   interface FastifyInstance {

@@ -26,23 +26,20 @@
     "eslint": "^8.15.0",
     "eslint-import-resolver-typescript": "^2.7.1",
     "eslint-plugin-import": "^2.26.0",
-    "json-schema-to-typescript": "^10.1.5",
-    "onchange": "^7.1.0",
     "prettier": "^2.6.2",
     "tap": "^16.1.0",
     "ts-node": "^10.4.0",
-    "typescript": "^4.5.4"
+    "typescript": "^4.5.4",
+    "empa-schemas": "../schemas"
   },
   "scripts": {
     "test": "yarn run build && tsc -p test/tsconfig.json && tap --ts test/**/*.test.ts",
     "start": "fastify start -p 5000 -l info dist/app.js",
-    "build": "yarn run compile-schemas && yarn run build:ts",
+    "build": "yarn run build:ts",
     "build:ts": "tsc",
     "watch:ts": "tsc -w",
-    "dev": "yarn run build && concurrently -k -p \"[{name}]\" -n \"TypeScript,App\" -c \"yellow.bold,cyan.bold\" \"npm:watch:ts\" \"npm:watch:compile-schemas\" \"npm:dev:start\"",
-    "dev:start": "fastify start -p 5000 --ignore-watch=.ts$ -w -l info -P dist/app.js",
-    "compile-schemas": "json2ts -i 'src/schemas/*.json' -o src/types",
-    "watch:compile-schemas": "onchange 'src/schemas/*.json' -- yarn run compile-schemas"
+    "dev": "yarn run build && concurrently -k -p \"[{name}]\" -n \"TypeScript,App\" -c \"yellow.bold,cyan.bold\" \"npm:watch:ts\" \"npm:dev:start\"",
+    "dev:start": "fastify start -p 5000 --ignore-watch=.ts$ -w -l info -P dist/app.js"
   },
   "prettier": {}
 }

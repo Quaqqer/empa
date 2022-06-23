@@ -8,6 +8,6 @@
   "scripts": {
     "build": "concurrently -k -n frontend,backend 'cd frontend && yarn build' 'cd backend && yarn build'",
     "start": "concurrently -k -n frontend,backend 'cd frontend && yarn start' 'cd backend && yarn start'",
-    "dev": "concurrently -k -n frontend,backend 'cd frontend && yarn dev' 'cd backend && yarn dev'"
+    "dev": "concurrently -k -n frontend,backend,schemas 'cd frontend && yarn dev' 'cd backend && yarn dev' 'cd schemas && yarn dev'"
   }
 }

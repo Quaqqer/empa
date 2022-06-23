@@ -1,8 +1,7 @@
+import { PostSnakeScore as PostSnakeScoreType } from "empa-schemas";
+import * as PostSnakeScore from "empa-schemas/schemas/PostSnakeScore.json";
+import * as SnakeScores from "empa-schemas/schemas/SnakeScores.json";
 import { FastifyPluginAsync } from "fastify";
-
-import * as PostSnakeScore from "../../schemas/PostSnakeScore.json";
-import * as SnakeScores from "../../schemas/SnakeScores.json";
-import { PostSnakeScore as PostSnakeScoreType } from "../../types/PostSnakeScore";
 
 const snakePlugin: FastifyPluginAsync = async (fastify) => {
   const getLeaderboard = fastify.db.prepare(

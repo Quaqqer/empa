@@ -1,7 +1,6 @@
+import { XPlusY } from "empa-schemas";
+import * as XPlusYSchema from "empa-schemas/schemas/xPlusY.json";
 import { FastifyPluginAsync } from "fastify";
-
-import * as XPlusYSchema from "../../schemas/xPlusY.json";
-import { XPlusY } from "../../types/xPlusY";
 
 const root: FastifyPluginAsync = async (fastify) => {
   fastify.get("/", {
