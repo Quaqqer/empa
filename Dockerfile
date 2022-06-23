@@ -11,7 +11,8 @@ RUN apk add yarn
 COPY . .
 
 # Install dependencies and build, remove dev dependencies and clean cache
-RUN (cd frontend && yarn install && yarn build && yarn install --prod) &&\
+RUN (cd schemas && yarn install && yarn build && yarn install --prod) &&\
+    (cd frontend && yarn install && yarn build && yarn install --prod) &&\
     (cd backend && yarn install && yarn build && yarn install --prod) &&\
     (yarn install) &&\
     yarn cache clean

@@ -15,7 +15,7 @@
   "scripts": {
     "compile-schemas": "json2ts -i 'schemas/*.json' -o types && cat types/* > types.ts && rm types -r",
     "watch:compile-schemas": "onchange 'schemas/*.json' -- yarn run compile-schemas",
-    "dev": "npm run compile-schemas && npm run watch:compile-schemas",
-    "build": "npm run compile-schemas"
+    "dev": "yarn compile-schemas && yarn watch:compile-schemas",
+    "build": "yarn compile-schemas"
   }
 }

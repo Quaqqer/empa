@@ -30,13 +30,14 @@ import {
   Wrap,
   WrapItem,
 } from "@chakra-ui/react";
+import { SnakeScores } from "empa-schemas";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 import { Game } from "../../games/snake";
 import { darkTheme, lightTheme } from "../../games/snake/colors";
 
 export type SnakeProps = {
-  scores: SnakeScore[];
+  scores: SnakeScores;
 };
 
 export default function Snake({ scores }: SnakeProps): JSX.Element {
@@ -129,19 +130,10 @@ export function SnakeGame({ game, running }: SnakeCanvasProps): JSX.Element {
 }
 
 /**
- * A single snake score
- */
-type SnakeScore = {
-  id: number;
-  name: string;
-  score: number;
-};
-
-/**
  * The snake scoreboard props.
  */
 type SnakeScoreboardProps = {
-  scores: SnakeScore[];
+  scores: SnakeScores;
 };
 
 /**

@@ -13,6 +13,7 @@
     "@fastify/sensible": "^4.0.0",
     "@types/better-sqlite3": "^7.5.0",
     "better-sqlite3": "^7.5.3",
+    "empa-schemas": "../schemas",
     "fastify": "^3.0.0",
     "fastify-cli": "^3.1.0",
     "fastify-plugin": "^3.0.0"
@@ -29,8 +30,7 @@
     "prettier": "^2.6.2",
     "tap": "^16.1.0",
     "ts-node": "^10.4.0",
-    "typescript": "^4.5.4",
-    "empa-schemas": "../schemas"
+    "typescript": "^4.5.4"
   },
   "scripts": {
     "test": "yarn run build && tsc -p test/tsconfig.json && tap --ts test/**/*.test.ts",
