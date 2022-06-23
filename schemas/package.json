@@ -13,7 +13,7 @@
     "onchange": "^7.1.0"
   },
   "scripts": {
-    "compile-schemas": "json2ts -i 'schemas/*.json' -o types && cat types/* > types.ts && rm types -r",
+    "compile-schemas": "json2ts --cwd schemas -i 'schemas/*.json' -o types && cat types/* > types.ts && rm types -r",
     "watch:compile-schemas": "onchange 'schemas/*.json' -- yarn run compile-schemas",
     "dev": "yarn compile-schemas && yarn watch:compile-schemas",
     "build": "yarn compile-schemas"
