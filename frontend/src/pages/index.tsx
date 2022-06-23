@@ -1,11 +1,18 @@
 import { Box, Heading, Text } from "@chakra-ui/react";
+import Head from "next/head";
 
 export default function Home(): JSX.Element {
   return (
-    <Box>
-      <Heading>Hej hej</Heading>
+    <>
+      <Head>
+        <title>empa.xyz</title>
+      </Head>
 
-      <Text>Hej där på dig</Text>
-    </Box>
+      <Box>
+        <Heading>Hej hej</Heading>
+
+        <Text>Hej där på dig</Text>
+      </Box>
+    </>
   );
 }
