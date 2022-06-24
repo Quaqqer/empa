@@ -1,5 +1,5 @@
 import fastifyEnv from "@fastify/env";
-import * as _Env from "empa-schemas/schemas/Env.json";
+import * as _Env from "empa-schemas/schemas/FastifyEnv.json";
 import { FastifyPluginAsync } from "fastify";
 import fp from "fastify-plugin";
 
