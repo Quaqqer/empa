@@ -1,28 +1,60 @@
 import { MoonIcon, SunIcon } from "@chakra-ui/icons";
 import {
   Box,
-  Button,
   Flex,
   HStack,
   IconButton,
+  Link,
   Popover,
   PopoverContent,
   PopoverTrigger,
   Stack,
   useColorMode,
   useColorModeValue,
+  forwardRef,
+  LinkProps,
 } from "@chakra-ui/react";
 import NLink from "next/link";
+import { useMemo } from "react";
 
 const leftLinks = [
   ["empa.xyz", "/"],
-  ["about", "/about"],
+  ["About", "/about"],
 ];
 
 const gameLinks = [
-  ["snake", "/games/snake"],
-  ["game of life", "/games/gameoflife"],
+  ["Snake", "/games/snake"],
+  ["Game of Life", "/games/gameoflife"],
 ];
+
+const NavLink = forwardRef((props: LinkProps & { href?: string }, ref) => {
+  const normalColor = useColorModeValue("gray.800", "gray.200");
+  const hoverColor = useColorModeValue("purple.500", "purple.200");
+
+  const { href, ...linkProps } = props;
+
+  const link = useMemo(
+    () => (
+      <Link
+        p={2}
+        fontWeight={600}
+        color={normalColor}
+        _hover={{ color: hoverColor }}
+        {...linkProps}
+        ref={ref}
+      />
+    ),
+    [normalColor, hoverColor, ref, linkProps]
+  );
+
+  return href === undefined ? (
+    link
+  ) : (
+    <NLink href={href} passHref>
+      {link}
+    </NLink>
+  );
+});
 
 export default function NavigationBar(): JSX.Element {
   const { colorMode, toggleColorMode } = useColorMode();
@@ -47,25 +79,23 @@ export default function NavigationBar(): JSX.Element {
         justifyContent="space-between"
       >
         <HStack>
-          {leftLinks.map((link) => (
-            <NLink href={link[1]} key={link[0]}>
-              <Button>{link[0]}</Button>
-            </NLink>
+          {leftLinks.map(([name, path], i) => (
+            <NavLink href={path} key={i}>
+              {name}
+            </NavLink>
           ))}
 
-          <Popover trigger="hover">
-            {/* eslint-disable-next-line */}
-            {/* @ts-ignore: Error with react 18 :-(, seems to work though */}
+          <Popover trigger="hover" placement="bottom-start">
             <PopoverTrigger>
-              <Button>games</Button>
+              <NavLink>Games</NavLink>
             </PopoverTrigger>
 
             <PopoverContent border={0} boxShadow="xl" maxWidth="200px">
               <Stack>
                 {gameLinks.map(([name, link], i) => (
-                  <NLink href={link} passHref key={i}>
-                    <Button>{name}</Button>
-                  </NLink>
+                  <NavLink href={link} key={i}>
+                    {name}
+                  </NavLink>
                 ))}
               </Stack>
             </PopoverContent>
