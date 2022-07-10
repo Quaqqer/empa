@@ -148,30 +148,36 @@ export class GameState {
 
   public updateInput(e: KeyboardEvent): boolean {
     const cdir = this.snake.dir;
-    const [ndir, captured]: [Direction, boolean] = (() => {
+    const ndir: Direction = (() => {
       switch (e.key) {
         case "ArrowUp":
         case "k":
-          return [Direction.Up, true];
+          return Direction.Up;
         case "ArrowDown":
         case "j":
-          return [Direction.Down, true];
+          return Direction.Down;
         case "ArrowLeft":
         case "h":
-          return [Direction.Left, true];
+          return Direction.Left;
         case "l":
         case "ArrowRight":
-          return [Direction.Right, true];
+          return Direction.Right;
         default:
-          return [Direction.None, false];
+          return Direction.None;
       }
     })();
 
-    if (ndir !== Direction.None && ndir !== oppositeDir(cdir)) {
+    // Don't capture if pressing opposite key
+    if (ndir === oppositeDir(cdir)) return false;
+
+    // Capture only if we change direction or if we move in the same one
+    if (ndir !== Direction.None) {
       this.snake.dir = ndir;
+      return true;
     }
 
-    return captured;
+    // If direction is None, we didn't capture
+    return false;
   }
 
   public updateTime(): number {
