@@ -25,6 +25,7 @@ const leftLinks = [
 const gameLinks = [
   ["Snake", "/games/snake"],
   ["Game of Life", "/games/gameoflife"],
+  ["CineMraft", "/games/cinemraft"],
 ];
 
 const NavLink = forwardRef((props: LinkProps & { href?: string }, ref) => {

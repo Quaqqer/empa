@@ -13,12 +13,16 @@
     "@chakra-ui/react": "^2.1.0",
     "@emotion/react": "^11",
     "@emotion/styled": "^11",
+    "@types/three": "^0.144.0",
+    "alea": "^1.0.1",
     "empa-schemas": "../schemas",
     "framer-motion": "^6",
     "lodash": "^4.17.21",
     "next": "12.1.6",
     "react": "18.1.0",
-    "react-dom": "18.1.0"
+    "react-dom": "18.1.0",
+    "simplex-noise": "^4.0.1",
+    "three": "^0.146.0"
   },
   "devDependencies": {
     "@types/lodash": "^4.14.182",
