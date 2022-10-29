@@ -2,7 +2,7 @@ import { useEffect, useRef } from "react";
 import * as three from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 
-import { chunkTo3D, generateChunk, stitchChunk } from "./blocks";
+import { chunkSize, generateChunk, stitchChunk } from "./blocks";
 
 export default function CineMraft(): JSX.Element {
   const divRef = useRef<HTMLDivElement>(null);
@@ -30,19 +30,40 @@ export default function CineMraft(): JSX.Element {
       // Set the size of the renderer element
       renderer.setSize(800, 800);
 
-      // Create a chunk
-      for (let x = 0; x < 1; x++) {
-        for (let z = 0; z < 1; z++) {
+      // Create chunks
+      for (let x = 0; x < 3; x++) {
+        for (let z = 0; z < 3; z++) {
           const chunk = generateChunk(1, x, z);
           const stitchedChunk = stitchChunk(chunk);
-          /* const chunk3D = chunkTo3D(chunk, x, z); */
+          stitchedChunk.position.set(x * chunkSize, 0, z * chunkSize);
           scene.add(stitchedChunk);
         }
       }
 
-      scene.add(new three.ArrowHelper(new three.Vector3(1, 0, 0), new three.Vector3(0, 0, 0), 1, 0xff0000));
-      scene.add(new three.ArrowHelper(new three.Vector3(0, 1, 0), new three.Vector3(0, 0, 0), 1, 0x00ff00));
-      scene.add(new three.ArrowHelper(new three.Vector3(0, 0, 1), new three.Vector3(0, 0, 0), 1, 0x0000ff));
+      scene.add(
+        new three.ArrowHelper(
+          new three.Vector3(1, 0, 0),
+          new three.Vector3(0, 0, 0),
+          5,
+          0xff0000
+        )
+      );
+      scene.add(
+        new three.ArrowHelper(
+          new three.Vector3(0, 1, 0),
+          new three.Vector3(0, 0, 0),
+          5,
+          0x00ff00
+        )
+      );
+      scene.add(
+        new three.ArrowHelper(
+          new three.Vector3(0, 0, 1),
+          new three.Vector3(0, 0, 0),
+          5,
+          0x0000ff
+        )
+      );
 
       // Begin animating
       let animating = true;
