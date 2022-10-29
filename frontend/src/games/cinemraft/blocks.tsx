@@ -9,10 +9,14 @@ function vec3Key([x, y, z]: vec3): string {
 }
 
 function vec3FromKey(s: string): vec3 {
-  const match = /^(\d+(:?\.\d+)?):(\d+(:?\.\d+)?):(\d+(:?\.\d+)?)$/.exec(s);
+  const match = /^-?(\d+(?:\.\d+)?):-?(\d+(?:\.\d+)?):-?(\d+(?:\.\d+)?)$/.exec(s);
   if (match === null) throw Error("Could not create key from string: " + s);
   const [_, x, y, z] = match;
   return [x, y, z].map((v) => Number(v)) as vec3;
+}
+
+function vec3Add(lhs: vec3, rhs: vec3): vec3 {
+  return lhs.map((v, i) => v + rhs[i]) as vec3;
 }
 
 class Chunk {
@@ -28,6 +32,10 @@ class Chunk {
 
   get(pos: vec3): Block | undefined {
     return this.map.get(vec3Key(pos));
+  }
+
+  has(pos: vec3): boolean {
+    return this.map.has(vec3Key(pos));
   }
 
   forEach(cb: (b: Block, p: vec3) => void): void {
@@ -129,10 +137,28 @@ export function stitchChunk(chunk: Chunk): three.Mesh {
 
   const verts: number[] = [];
 
+  console.log(chunk);
+  chunk.forEach((b, bp) => {
+    for (const face of blockFaces) {
+      const faceNeighbour = vec3Add(bp, faceNormal(face));
+
+      if (!chunk.has(faceNeighbour)) {
+        const fv = faceVertices(face).map((v) => vec3Add(v, bp));
+
+        for (const [x, y, z] of fv) {
+          verts.push(x);
+          verts.push(y);
+          verts.push(z);
+        }
+      }
+    }
+  });
+
   buf.setAttribute(
     "position",
     new three.BufferAttribute(new Float32Array(verts), 3)
   );
+
   const mat = new three.MeshBasicMaterial({ color: 0x00ff00 });
   const mesh = new three.Mesh(buf, mat);
 
@@ -157,7 +183,24 @@ const blockFaces: BlockFace[] = [
   BlockFace.Left,
 ];
 
-function faceNormal(face: BlockFace): vec3[] {
+function faceNormal(face: BlockFace): vec3 {
+  switch (face) {
+    case BlockFace.Front:
+      return [0, 0, 1];
+    case BlockFace.Back:
+      return [0, 0, -1];
+    case BlockFace.Up:
+      return [0, 1, 0];
+    case BlockFace.Down:
+      return [0, -1, 0];
+    case BlockFace.Right:
+      return [1, 0, 0];
+    case BlockFace.Left:
+      return [-1, 0, 0];
+  }
+}
+
+function faceVertices(face: BlockFace): vec3[] {
   switch (face) {
     case BlockFace.Front:
       return [

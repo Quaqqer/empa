@@ -16,7 +16,7 @@ export default function CineMraft(): JSX.Element {
       const scene = new three.Scene();
       const camera = new three.PerspectiveCamera(
         75,
-        window.innerWidth / window.innerHeight,
+        1,
         0.1,
         1000
       );
