@@ -36,24 +36,20 @@ export function generateChunk(
       const x = dx + chunkX * chunkSize;
       const z = dz + chunkZ * chunkSize;
 
-      const height = oceanHeight + 10 * noise2D(x / 1000, z / 1000);
+      const height = Math.round(oceanHeight + 10 * noise2D(x / 100, z / 100));
 
-      for (let y = 0; y < height - 3; y++) {
+      for (let y = 0; y < height - 3; y++)
         chunk.set({ x: dx, y, z: dz }, { id: BlockId.Stone });
-      }
 
-      if (height < oceanHeight) {
-        for (let y = Math.max(height - 3, 0); y < height; y++) {
+      if (height < oceanHeight + 2) {
+        for (let y = height - 3; y < height; y++)
           chunk.set({ x: dx, y, z: dz }, { id: BlockId.Sand });
-        }
 
-        for (let y = height; y < oceanHeight; y++) {
+        for (let y = height; y < oceanHeight; y++)
           chunk.set({ x: dx, y, z: dz }, { id: BlockId.Water });
-        }
       } else {
-        for (let y = Math.max(height - 3, 0); y < height - 1; y++) {
+        for (let y = height - 3; y < height - 1; y++)
           chunk.set({ x: dx, y, z: dz }, { id: BlockId.Dirt });
-        }
 
         chunk.set({ x: dx, y: height - 1, z: dz }, { id: BlockId.Grass });
       }
@@ -98,12 +94,7 @@ export function chunkTo3D(
   return group;
 }
 
-export function stitchChunk(
-  chunk: Chunk,
-  chunkX: number,
-  chunkZ: number,
-  chunks: Map<{ x: number; z: number }, Chunk>
-): Group {
+export function stitchChunk(chunk: Chunk): Group {
   function getBlock(dx: number, dy: number, dz: number): Block | null {
     return null;
   }
@@ -118,18 +109,73 @@ export function stitchChunk(
 
   const group = new three.Group();
 
-  chunk.forEach((block, position) => {
-    for (let face = 0; face < 6; face++) {
-      const geom = new three.BufferGeometry();
-      // prettier-ignore
-      const vertices = new Float32Array([]);
-      geom.setAttribute("position", new three.BufferAttribute(vertices, 3));
-      const mat = new three.MeshBasicMaterial({ color: colors[block.id] });
-      const mesh = new three.Mesh(geom, mat);
+  const geom = new three.PlaneGeometry(1, 1);
+  const mat = new three.MeshBasicMaterial({ color: colors[BlockId.Grass] });
+  const mesh = new three.Mesh(geom, mat);
 
-      group.add(mesh);
-    }
-  });
+  group.add(mesh);
+
+  const vertices = [
+    // front
+    { pos: [-1, -1, 1], norm: [0, 0, 1], uv: [0, 0] },
+    { pos: [1, -1, 1], norm: [0, 0, 1], uv: [1, 0] },
+    { pos: [-1, 1, 1], norm: [0, 0, 1], uv: [0, 1] },
+
+    { pos: [-1, 1, 1], norm: [0, 0, 1], uv: [0, 1] },
+    { pos: [1, -1, 1], norm: [0, 0, 1], uv: [1, 0] },
+    { pos: [1, 1, 1], norm: [0, 0, 1], uv: [1, 1] },
+    // right
+    { pos: [1, -1, 1], norm: [1, 0, 0], uv: [0, 0] },
+    { pos: [1, -1, -1], norm: [1, 0, 0], uv: [1, 0] },
+    { pos: [1, 1, 1], norm: [1, 0, 0], uv: [0, 1] },
+
+    { pos: [1, 1, 1], norm: [1, 0, 0], uv: [0, 1] },
+    { pos: [1, -1, -1], norm: [1, 0, 0], uv: [1, 0] },
+    { pos: [1, 1, -1], norm: [1, 0, 0], uv: [1, 1] },
+    // back
+    { pos: [1, -1, -1], norm: [0, 0, -1], uv: [0, 0] },
+    { pos: [-1, -1, -1], norm: [0, 0, -1], uv: [1, 0] },
+    { pos: [1, 1, -1], norm: [0, 0, -1], uv: [0, 1] },
+
+    { pos: [1, 1, -1], norm: [0, 0, -1], uv: [0, 1] },
+    { pos: [-1, -1, -1], norm: [0, 0, -1], uv: [1, 0] },
+    { pos: [-1, 1, -1], norm: [0, 0, -1], uv: [1, 1] },
+    // left
+    { pos: [-1, -1, -1], norm: [-1, 0, 0], uv: [0, 0] },
+    { pos: [-1, -1, 1], norm: [-1, 0, 0], uv: [1, 0] },
+    { pos: [-1, 1, -1], norm: [-1, 0, 0], uv: [0, 1] },
+
+    { pos: [-1, 1, -1], norm: [-1, 0, 0], uv: [0, 1] },
+    { pos: [-1, -1, 1], norm: [-1, 0, 0], uv: [1, 0] },
+    { pos: [-1, 1, 1], norm: [-1, 0, 0], uv: [1, 1] },
+    // top
+    { pos: [1, 1, -1], norm: [0, 1, 0], uv: [0, 0] },
+    { pos: [-1, 1, -1], norm: [0, 1, 0], uv: [1, 0] },
+    { pos: [1, 1, 1], norm: [0, 1, 0], uv: [0, 1] },
+
+    { pos: [1, 1, 1], norm: [0, 1, 0], uv: [0, 1] },
+    { pos: [-1, 1, -1], norm: [0, 1, 0], uv: [1, 0] },
+    { pos: [-1, 1, 1], norm: [0, 1, 0], uv: [1, 1] },
+    // bottom
+    { pos: [1, -1, 1], norm: [0, -1, 0], uv: [0, 0] },
+    { pos: [-1, -1, 1], norm: [0, -1, 0], uv: [1, 0] },
+    { pos: [1, -1, -1], norm: [0, -1, 0], uv: [0, 1] },
+
+    { pos: [1, -1, -1], norm: [0, -1, 0], uv: [0, 1] },
+    { pos: [-1, -1, 1], norm: [0, -1, 0], uv: [1, 0] },
+    { pos: [-1, -1, -1], norm: [0, -1, 0], uv: [1, 1] },
+  ];
+
+  /* chunk.forEach((block, position) => { */
+  /*   for (let face = 0; face < 6; face++) { */
+  /*     const geom = new three.PlaneGeometry(1, 1); */
+  /*     // prettier-ignore */
+  /*     const mat = new three.MeshBasicMaterial({ color: colors[block.id] }); */
+  /*     const mesh = new three.Mesh(geom, mat); */
+  /**/
+  /*     group.add(mesh); */
+  /*   } */
+  /* }); */
 
   return group;
 }
