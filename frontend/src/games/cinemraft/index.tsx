@@ -31,8 +31,8 @@ export default function CineMraft(): JSX.Element {
       renderer.setSize(800, 800);
 
       // Create chunks
-      for (let x = 0; x < 3; x++) {
-        for (let z = 0; z < 3; z++) {
+      for (let x = -20; x < 20; x++) {
+        for (let z = -20; z < 20; z++) {
           const chunk = generateChunk(1, x, z);
           const stitchedChunk = stitchChunk(chunk);
           stitchedChunk.position.set(x * chunkSize, 0, z * chunkSize);

@@ -113,8 +113,6 @@ const floatColors = Object.fromEntries(
     const g = (v >> 8 & 0xff) / 0xff;
     const b = (v & 0xff) / 0xff;
 
-    console.log(r, g, b);
-
     return [k, [r, g, b]];
   })
 );
@@ -136,7 +134,7 @@ export function stitchChunk(chunk: Chunk): three.Mesh {
           verts.push(...pos);
         }
 
-        for (let i = 0; i < 2; i++) {
+        for (let i = 0; i < 6; i++) {
           cols.push(...floatColors[b.id]);
         }
       }
@@ -152,7 +150,7 @@ export function stitchChunk(chunk: Chunk): three.Mesh {
     new three.BufferAttribute(new Float32Array(cols), 3)
   );
 
-  const mat = new three.MeshBasicMaterial();
+  const mat = new three.MeshBasicMaterial({vertexColors: true})
   const mesh = new three.Mesh(buf, mat);
 
   return mesh;
