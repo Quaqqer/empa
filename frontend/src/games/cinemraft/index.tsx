@@ -20,10 +20,10 @@ export default function CineMraft(): JSX.Element {
         0.1,
         1000
       );
-      camera.position.set(48, 40, 8);
+      camera.position.set(-20, 50, -20);
       const renderer = new three.WebGLRenderer();
       const controls = new OrbitControls(camera, renderer.domElement);
-      /* controls.target.set(8, 40, 8); */
+      controls.target.set(8, 40, 8);
 
       // Add the domElement of the renderer to the div
       div.appendChild(renderer.domElement);

@@ -9,7 +9,9 @@ function vec3Key([x, y, z]: vec3): string {
 }
 
 function vec3FromKey(s: string): vec3 {
-  const match = /^-?(\d+(?:\.\d+)?):-?(\d+(?:\.\d+)?):-?(\d+(?:\.\d+)?)$/.exec(s);
+  const match = /^-?(\d+(?:\.\d+)?):-?(\d+(?:\.\d+)?):-?(\d+(?:\.\d+)?)$/.exec(
+    s
+  );
   if (match === null) throw Error("Could not create key from string: " + s);
   const [_, x, y, z] = match;
   return [x, y, z].map((v) => Number(v)) as vec3;
@@ -97,47 +99,32 @@ export function generateChunk(
   return chunk;
 }
 
-export function blockTo3D(block: Block): three.Object3D {
-  const colors: Record<BlockId, number> = {
-    [BlockId.Dirt]: 0x964b00,
-    [BlockId.Grass]: 0x00ff00,
-    [BlockId.Stone]: 0x888888,
-    [BlockId.Sand]: 0xffff00,
-    [BlockId.Water]: 0x0000ff,
-  };
+const colors: Record<BlockId, number> = {
+  [BlockId.Dirt]: 0x964b00,
+  [BlockId.Grass]: 0x00ff00,
+  [BlockId.Stone]: 0x888888,
+  [BlockId.Sand]: 0xffff00,
+  [BlockId.Water]: 0x0000ff,
+};
 
-  const geom = new three.BoxGeometry(1, 1, 1);
-  const mat = new three.MeshBasicMaterial({ color: colors[block.id] });
-  const cube = new three.Mesh(geom, mat);
+const floatColors = Object.fromEntries(
+  Object.entries(colors).map(([k, v]) => {
+    const r = (v >> 16) / 0xff;
+    const g = (v >> 8 & 0xff) / 0xff;
+    const b = (v & 0xff) / 0xff;
 
-  return cube;
-}
+    console.log(r, g, b);
 
-export function chunkTo3D(
-  chunk: Chunk,
-  chunkX: number,
-  chunkZ: number
-): three.Group {
-  const group = new three.Group();
-
-  chunk.forEach((block, pos) => {
-    const block3D = blockTo3D(block);
-    block3D.position.set(...pos);
-    group.add(block3D);
-  });
-
-  group.position.x = chunkX * chunkSize;
-  group.position.z = chunkZ * chunkSize;
-
-  return group;
-}
+    return [k, [r, g, b]];
+  })
+);
 
 export function stitchChunk(chunk: Chunk): three.Mesh {
   const buf = new three.BufferGeometry();
 
   const verts: number[] = [];
+  const cols: number[] = [];
 
-  console.log(chunk);
   chunk.forEach((b, bp) => {
     for (const face of blockFaces) {
       const faceNeighbour = vec3Add(bp, faceNormal(face));
@@ -145,10 +132,12 @@ export function stitchChunk(chunk: Chunk): three.Mesh {
       if (!chunk.has(faceNeighbour)) {
         const fv = faceVertices(face).map((v) => vec3Add(v, bp));
 
-        for (const [x, y, z] of fv) {
-          verts.push(x);
-          verts.push(y);
-          verts.push(z);
+        for (const pos of fv) {
+          verts.push(...pos);
+        }
+
+        for (let i = 0; i < 2; i++) {
+          cols.push(...floatColors[b.id]);
         }
       }
     }
@@ -158,8 +147,12 @@ export function stitchChunk(chunk: Chunk): three.Mesh {
     "position",
     new three.BufferAttribute(new Float32Array(verts), 3)
   );
+  buf.setAttribute(
+    "color",
+    new three.BufferAttribute(new Float32Array(cols), 3)
+  );
 
-  const mat = new three.MeshBasicMaterial({ color: 0x00ff00 });
+  const mat = new three.MeshBasicMaterial();
   const mesh = new three.Mesh(buf, mat);
 
   return mesh;
