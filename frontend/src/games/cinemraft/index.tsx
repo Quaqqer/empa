@@ -14,12 +14,8 @@ export default function CineMraft(): JSX.Element {
     if (div != null) {
       // Create scene, camera, renderer and orbit controls
       const scene = new three.Scene();
-      const camera = new three.PerspectiveCamera(
-        75,
-        1,
-        0.1,
-        1000
-      );
+      scene.fog = new three.Fog(0xffffff, 0, 500)
+      const camera = new three.PerspectiveCamera(75, 1, 0.1, 1000);
       camera.position.set(-20, 50, -20);
       const renderer = new three.WebGLRenderer();
       const controls = new OrbitControls(camera, renderer.domElement);
@@ -31,12 +27,14 @@ export default function CineMraft(): JSX.Element {
       renderer.setSize(800, 800);
 
       // Create chunks
-      for (let x = -20; x < 20; x++) {
-        for (let z = -20; z < 20; z++) {
-          const chunk = generateChunk(1, x, z);
-          const stitchedChunk = stitchChunk(chunk);
-          stitchedChunk.position.set(x * chunkSize, 0, z * chunkSize);
-          scene.add(stitchedChunk);
+      for (let x = -4; x < 4; x++) {
+        for (let z = -4; z < 4; z++) {
+          (async (x, z) => {
+            const chunk = generateChunk(1, x, z);
+            const stitchedChunk = stitchChunk(chunk);
+            stitchedChunk.position.set(x * chunkSize, 0, z * chunkSize);
+            scene.add(stitchedChunk);
+          })(x, z);
         }
       }
 
