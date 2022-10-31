@@ -1,4 +1,5 @@
 import Alea from "alea";
+import _ from "lodash";
 import { createNoise2D } from "simplex-noise";
 import * as three from "three";
 
@@ -57,9 +58,9 @@ enum BlockId {
   Water,
 }
 
-export type Block = {
-  id: BlockId;
-};
+class Block {
+  constructor(public id: BlockId) {}
+}
 
 export function generateChunk(
   seed: number,
@@ -79,19 +80,19 @@ export function generateChunk(
       const height = Math.round(oceanHeight + 10 * noise2D(x / 100, z / 100));
 
       for (let y = 0; y < height - 3; y++)
-        chunk.set([dx, y, dz], { id: BlockId.Stone });
+        chunk.set([dx, y, dz], new Block(BlockId.Stone));
 
       if (height < oceanHeight + 2) {
         for (let y = height - 3; y < height; y++)
-          chunk.set([dx, y, dz], { id: BlockId.Sand });
+          chunk.set([dx, y, dz], new Block(BlockId.Sand));
 
         for (let y = height; y < oceanHeight; y++)
-          chunk.set([dx, y, dz], { id: BlockId.Water });
+          chunk.set([dx, y, dz], new Block(BlockId.Water));
       } else {
         for (let y = height - 3; y < height - 1; y++)
-          chunk.set([dx, y, dz], { id: BlockId.Dirt });
+          chunk.set([dx, y, dz], new Block(BlockId.Dirt));
 
-        chunk.set([dx, height - 1, dz], { id: BlockId.Grass });
+        chunk.set([dx, height - 1, dz], new Block(BlockId.Grass));
       }
     }
   }
@@ -99,43 +100,53 @@ export function generateChunk(
   return chunk;
 }
 
-const colors: Record<BlockId, number> = {
-  [BlockId.Dirt]: 0x964b00,
-  [BlockId.Grass]: 0x00ff00,
-  [BlockId.Stone]: 0x888888,
-  [BlockId.Sand]: 0xffff00,
-  [BlockId.Water]: 0x0000ff,
+const colors: Record<BlockId, string> = {
+  [BlockId.Dirt]: "#964b00",
+  [BlockId.Grass]: "#00ff00",
+  [BlockId.Stone]: "#888888",
+  [BlockId.Sand]: "#ffff00",
+  [BlockId.Water]: "#0000ffb0",
 };
 
 const floatColors = Object.fromEntries(
   Object.entries(colors).map(([k, v]) => {
-    const r = (v >> 16) / 0xff;
-    const g = (v >> 8 & 0xff) / 0xff;
-    const b = (v & 0xff) / 0xff;
+    const cols = _.chunk(v.slice(1), 2).map(
+      (col) => parseInt(col.join(""), 16) / 0xff
+    );
 
-    return [k, [r, g, b]];
+    const [r, g, b, a] = cols.concat(cols.length === 3 ? [1] : []);
+
+    return [k, [r, g, b, a]];
   })
 );
 
-export function stitchChunk(chunk: Chunk): three.Mesh {
+export function stitchChunk(chunk: Chunk): three.Group {
   const buf = new three.BufferGeometry();
-
   const verts: number[] = [];
   const cols: number[] = [];
 
+  const transparentBuf = new three.BufferGeometry();
+  const transparentVerts: number[] = [];
+  const transparentCols: number[] = [];
+
   chunk.forEach((b, bp) => {
     for (const face of blockFaces) {
-      const faceNeighbour = vec3Add(bp, faceNormal(face));
+      const faceNeighbour = chunk.get(vec3Add(bp, faceNormal(face)));
 
-      if (!chunk.has(faceNeighbour)) {
+      if (
+        faceNeighbour === undefined ||
+        (b.id !== BlockId.Water && faceNeighbour.id === BlockId.Water)
+      ) {
         const fv = faceVertices(face).map((v) => vec3Add(v, bp));
 
         for (const pos of fv) {
-          verts.push(...pos);
+          (b.id === BlockId.Water ? transparentVerts : verts).push(...pos);
         }
 
         for (let i = 0; i < 6; i++) {
-          cols.push(...floatColors[b.id]);
+          (b.id === BlockId.Water ? transparentCols : cols).push(
+            ...floatColors[b.id]
+          );
         }
       }
     }
@@ -147,13 +158,32 @@ export function stitchChunk(chunk: Chunk): three.Mesh {
   );
   buf.setAttribute(
     "color",
-    new three.BufferAttribute(new Float32Array(cols), 3)
+    new three.BufferAttribute(new Float32Array(cols), 4)
   );
-
-  const mat = new three.MeshBasicMaterial({vertexColors: true})
+  const mat = new three.MeshBasicMaterial({
+    vertexColors: true,
+  });
   const mesh = new three.Mesh(buf, mat);
 
-  return mesh;
+  transparentBuf.setAttribute(
+    "position",
+    new three.BufferAttribute(new Float32Array(transparentVerts), 3)
+  );
+  transparentBuf.setAttribute(
+    "color",
+    new three.BufferAttribute(new Float32Array(transparentCols), 4)
+  );
+  const transparentMat = new three.MeshBasicMaterial({
+    vertexColors: true,
+    transparent: true,
+  });
+  const transparentMesh = new three.Mesh(transparentBuf, transparentMat);
+
+  const group = new three.Group();
+  group.add(mesh);
+  group.add(transparentMesh);
+
+  return group;
 }
 
 enum BlockFace {
