@@ -77,22 +77,6 @@ enum BlockId {
   Water,
 }
 
-const blockIds: BlockId[] = [
-  BlockId.Dirt,
-  BlockId.Grass,
-  BlockId.Stone,
-  BlockId.Sand,
-  BlockId.Water,
-];
-
-const colors: Record<BlockId, string> = {
-  [BlockId.Dirt]: "#964b00",
-  [BlockId.Grass]: "#00ff00",
-  [BlockId.Stone]: "#888888",
-  [BlockId.Sand]: "#ffff00",
-  [BlockId.Water]: "#0000ffb0",
-};
-
 export async function blockTextures(): Promise<
   Record<BlockId, HTMLImageElement>
 > {
@@ -224,18 +208,6 @@ export function generateChunk(
 
   return chunk;
 }
-
-const floatColors = Object.fromEntries(
-  Object.entries(colors).map(([k, v]) => {
-    const cols = _.chunk(v.slice(1), 2).map(
-      (col) => parseInt(col.join(""), 16) / 0xff
-    );
-
-    const [r, g, b, a] = cols.concat(cols.length === 3 ? [1] : []);
-
-    return [k, [r, g, b, a]];
-  })
-);
 
 export function stitchChunk(
   chunk: Chunk,
