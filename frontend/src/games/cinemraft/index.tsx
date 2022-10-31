@@ -1,5 +1,14 @@
+import {
+  Button,
+  HStack,
+  NumberDecrementStepper,
+  NumberIncrementStepper,
+  NumberInput,
+  NumberInputField,
+  NumberInputStepper,
+} from "@chakra-ui/react";
 import _ from "lodash";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import * as three from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 
@@ -16,6 +25,9 @@ import {
 
 export default function CineMraft(): JSX.Element {
   const divRef = useRef<HTMLDivElement>(null);
+
+  const [pendingRenderDistance, setPendingRenderDistance] = useState(4);
+  const [renderDistance, setRenderDistance] = useState(4);
 
   useEffect(() => {
     const div = divRef.current;
@@ -45,8 +57,8 @@ export default function CineMraft(): JSX.Element {
 
       // Create chunks
       const chunks: Map<string, Chunk> = new Map();
-      for (let x = -3; x < 3; x++) {
-        for (let z = -3; z < 3; z++) {
+      for (let x = -renderDistance; x < renderDistance; x++) {
+        for (let z = -renderDistance; z < renderDistance; z++) {
           const chunk = generateChunk(1, x, z);
           chunks.set(vec2Key([x, z]), chunk);
         }
@@ -123,7 +135,28 @@ export default function CineMraft(): JSX.Element {
         div.removeChild(renderer.domElement);
       };
     }
-  });
+  }, [renderDistance]);
 
-  return <div ref={divRef}></div>;
+  return (
+    <>
+      <div ref={divRef} />
+      <HStack>
+        <NumberInput
+          value={pendingRenderDistance}
+          max={50}
+          min={0}
+          onChange={(_, x) => void setPendingRenderDistance(x)}
+        >
+          <NumberInputField />
+          <NumberInputStepper>
+            <NumberIncrementStepper />
+            <NumberDecrementStepper />
+          </NumberInputStepper>
+        </NumberInput>
+        <Button onClick={() => void setRenderDistance(pendingRenderDistance)}>
+          Set render distance
+        </Button>
+      </HStack>
+    </>
+  );
 }
