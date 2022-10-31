@@ -34,8 +34,11 @@ export function vec2FromKey(s: string): vec2 {
   const match = vec2Regex.exec(s);
   if (match === null) throw Error("Could not parse key from string: " + s);
   const [_, x, y] = match;
-  console.log(s, x, y);
   return [x, y].map((v) => Number(v)) as vec2;
+}
+
+export function vec2Add([x1, y1]: vec2, [x2, y2]: vec2): vec2 {
+  return [x1 + x2, y1 + y2];
 }
 
 export class Chunk {
@@ -89,6 +92,96 @@ const colors: Record<BlockId, string> = {
   [BlockId.Sand]: "#ffff00",
   [BlockId.Water]: "#0000ffb0",
 };
+
+export async function blockTextures(): Promise<
+  Record<BlockId, HTMLImageElement>
+> {
+  return Object.fromEntries(
+    await Promise.all(
+      Object.entries({
+        [BlockId.Dirt]: "/cinemraft/dirt.png",
+        [BlockId.Grass]: "/cinemraft/grass.png",
+        [BlockId.Stone]: "/cinemraft/stone.png",
+        [BlockId.Sand]: "/cinemraft/sand.png",
+        [BlockId.Water]: "/cinemraft/water.png",
+      }).map(([id, textureFile]) => {
+        return new Promise<[BlockId, HTMLImageElement]>((resolve, reject) => {
+          const image = new Image();
+          image.src = textureFile;
+          image.onload = () => void resolve([Number(id), image]);
+          image.onerror = () =>
+            reject(new Error(`Could not load asset: ${textureFile}.`));
+        });
+      })
+    )
+  ) as unknown as Promise<Record<BlockId, HTMLImageElement>>;
+}
+
+export class TextureAtlas {
+  private canvas: HTMLCanvasElement;
+  private textureCoords: Record<BlockId, [vec2, vec2]>;
+  public texture?: three.Texture;
+  public readonly width: number;
+  public readonly height: number;
+
+  constructor(private textures: Record<BlockId, HTMLImageElement>) {
+    this.canvas = document.createElement("canvas");
+
+    this.width = _.sum(Object.values(textures).map((img) => img.width));
+    this.canvas.width = this.width;
+    this.height = _.max(
+      Object.values(textures).map((img) => img.height)
+    ) as number;
+    this.canvas.height = this.height;
+
+    const ctx = this.canvas.getContext("2d") as CanvasRenderingContext2D;
+
+    const textureCoords: Record<string, [vec2, vec2]> = {};
+
+    let x = 0;
+    for (const [id, img] of Object.entries(textures)) {
+      ctx.drawImage(img, x, 0);
+
+      const coords = [
+        [x, 0],
+        [img.width, img.height],
+      ] as [vec2, vec2];
+
+      textureCoords[id] = coords;
+
+      x += img.width;
+    }
+
+    this.textureCoords = textureCoords as Record<BlockId, [vec2, vec2]>;
+  }
+
+  async init(): Promise<void> {
+    this.texture = await this.getAtlas();
+  }
+
+  get(id: BlockId): [vec2, vec2] {
+    return this.textureCoords[id];
+  }
+
+  getAtlas(): Promise<three.Texture> {
+    const dataUrl = this.canvas.toDataURL();
+    const loader = new three.TextureLoader();
+    return new Promise((resolve, reject) =>
+      loader.load(
+        dataUrl,
+        (texture) => {
+          texture.magFilter = three.NearestFilter;
+          texture.minFilter = three.NearestFilter;
+          texture.wrapS = three.ClampToEdgeWrapping;
+          texture.wrapT = three.ClampToEdgeWrapping;
+          resolve(texture);
+        },
+        undefined,
+        () => reject(new Error("Could not load texture atlas."))
+      )
+    );
+  }
+}
 
 class Block {
   constructor(public id: BlockId) {}
@@ -147,15 +240,16 @@ const floatColors = Object.fromEntries(
 export function stitchChunk(
   chunk: Chunk,
   [chunkX, chunkZ]: vec2,
-  chunks: Map<string, Chunk>
+  chunks: Map<string, Chunk>,
+  atlas: TextureAtlas
 ): three.Group {
   const buf = new three.BufferGeometry();
   const verts: number[] = [];
-  const cols: number[] = [];
+  const textures: number[] = [];
 
   const transparentBuf = new three.BufferGeometry();
   const transparentVerts: number[] = [];
-  const transparentCols: number[] = [];
+  const transparentTextures: number[] = [];
 
   function getBlock([x, y, z]: vec3): Block | undefined {
     const dx = Math.floor(x / chunkSize);
@@ -186,11 +280,19 @@ export function stitchChunk(
           (b.id === BlockId.Water ? transparentVerts : verts).push(...pos);
         }
 
-        for (let i = 0; i < 6; i++) {
-          (b.id === BlockId.Water ? transparentCols : cols).push(
-            ...floatColors[b.id]
-          );
-        }
+        const [textureCoords, [w, h]] = atlas.get(b.id);
+        const t = b.id === BlockId.Water ? transparentTextures : textures;
+        t.push(
+          // Hacky solution to artifacts in uv-mapping
+          ...[
+            vec2Add(textureCoords, [0, h]),
+            vec2Add(textureCoords, [w, h]),
+            vec2Add(textureCoords, [w, 0]),
+            vec2Add(textureCoords, [0, h]),
+            vec2Add(textureCoords, [w, 0]),
+            vec2Add(textureCoords, [0, 0]),
+          ].flatMap(([x, y]) => [x / atlas.width, y / atlas.height])
+        );
       }
     }
   });
@@ -200,11 +302,11 @@ export function stitchChunk(
     new three.BufferAttribute(new Float32Array(verts), 3)
   );
   buf.setAttribute(
-    "color",
-    new three.BufferAttribute(new Float32Array(cols), 4)
+    "uv",
+    new three.BufferAttribute(new Float32Array(textures), 2)
   );
   const mat = new three.MeshBasicMaterial({
-    vertexColors: true,
+    map: atlas.texture as three.Texture,
   });
   const mesh = new three.Mesh(buf, mat);
 
@@ -213,11 +315,11 @@ export function stitchChunk(
     new three.BufferAttribute(new Float32Array(transparentVerts), 3)
   );
   transparentBuf.setAttribute(
-    "color",
-    new three.BufferAttribute(new Float32Array(transparentCols), 4)
+    "uv",
+    new three.BufferAttribute(new Float32Array(transparentTextures), 2)
   );
   const transparentMat = new three.MeshBasicMaterial({
-    vertexColors: true,
+    map: atlas.texture as three.Texture,
     transparent: true,
     side: three.DoubleSide,
   });
@@ -283,13 +385,13 @@ function faceVertices(face: BlockFace): vec3[] {
       return [
         // Bottom left
         [0, 0, 0],
+        [0, 1, 0],
         [1, 1, 0],
-        [1, 0, 0],
 
         // Top left
         [0, 0, 0],
-        [0, 1, 0],
         [1, 1, 0],
+        [1, 0, 0],
       ];
 
     case BlockFace.Up:
@@ -308,13 +410,13 @@ function faceVertices(face: BlockFace): vec3[] {
       return [
         // Bottom right
         [0, 0, 1],
+        [0, 0, 0],
         [1, 0, 0],
-        [1, 0, 1],
 
         // Top left
         [0, 0, 1],
-        [0, 0, 0],
         [1, 0, 0],
+        [1, 0, 1],
       ];
 
     case BlockFace.Right:
@@ -333,13 +435,13 @@ function faceVertices(face: BlockFace): vec3[] {
       return [
         // Bottom right
         [0, 0, 1],
+        [0, 1, 1],
         [0, 1, 0],
-        [0, 0, 0],
 
         // Top left
         [0, 0, 1],
-        [0, 1, 1],
         [0, 1, 0],
+        [0, 0, 0],
       ];
   }
 }

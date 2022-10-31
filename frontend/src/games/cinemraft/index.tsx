@@ -4,10 +4,12 @@ import * as three from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 
 import {
+  blockTextures,
   Chunk,
   chunkSize,
   generateChunk,
   stitchChunk,
+  TextureAtlas,
   vec2FromKey,
   vec2Key,
 } from "./blocks";
@@ -43,58 +45,66 @@ export default function CineMraft(): JSX.Element {
         }
       }
 
-      // Stitch chunks
-      const chunk3Ds: three.Group[] = [];
-      for (const [pos, chunk] of chunks.entries()) {
-        const [cx, cz] = vec2FromKey(pos);
-        const chunk3D = stitchChunk(chunk, [cx, cz], chunks);
-        chunk3D.position.set(cx * chunkSize, 0, cz * chunkSize)
-        chunk3Ds.push(chunk3D);
-      }
-
-      // Add chunks to scene
-      for (const chunk3D of chunk3Ds)
-      scene.add(chunk3D);
-
-      scene.add(
-        new three.ArrowHelper(
-          new three.Vector3(1, 0, 0),
-          new three.Vector3(0, 0, 0),
-          5,
-          0xff0000
-        )
-      );
-      scene.add(
-        new three.ArrowHelper(
-          new three.Vector3(0, 1, 0),
-          new three.Vector3(0, 0, 0),
-          5,
-          0x00ff00
-        )
-      );
-      scene.add(
-        new three.ArrowHelper(
-          new three.Vector3(0, 0, 1),
-          new three.Vector3(0, 0, 0),
-          5,
-          0x0000ff
-        )
-      );
-
-      // Begin animating
       let animating = true;
 
-      // Animation loop, use recursion with requestAnimationFrame
-      (async () => {
-        function animate(): void {
-          if (animating) {
-            requestAnimationFrame(animate);
-            controls.update();
-            renderer.render(scene, camera);
-          }
+      const rest = async (): Promise<void> => {
+        // Create texture atlas
+        const bt = await blockTextures();
+        const textureAtlas = new TextureAtlas(bt);
+        await textureAtlas.init();
+
+        // Stitch chunks
+        const chunk3Ds: three.Group[] = [];
+        for (const [pos, chunk] of chunks.entries()) {
+          const [cx, cz] = vec2FromKey(pos);
+          const chunk3D = stitchChunk(chunk, [cx, cz], chunks, textureAtlas);
+          chunk3D.position.set(cx * chunkSize, 0, cz * chunkSize);
+          chunk3Ds.push(chunk3D);
         }
-        animate();
-      })();
+
+        // Add chunks to scene
+        for (const chunk3D of chunk3Ds) scene.add(chunk3D);
+
+        scene.add(
+          new three.ArrowHelper(
+            new three.Vector3(1, 0, 0),
+            new three.Vector3(0, 0, 0),
+            5,
+            0xff0000
+          )
+        );
+        scene.add(
+          new three.ArrowHelper(
+            new three.Vector3(0, 1, 0),
+            new three.Vector3(0, 0, 0),
+            5,
+            0x00ff00
+          )
+        );
+        scene.add(
+          new three.ArrowHelper(
+            new three.Vector3(0, 0, 1),
+            new three.Vector3(0, 0, 0),
+            5,
+            0x0000ff
+          )
+        );
+        scene.add(new three.AmbientLight(0xffffff, 1));
+
+        // Animation loop, use recursion with requestAnimationFrame
+        (async () => {
+          function animate(): void {
+            if (animating) {
+              requestAnimationFrame(animate);
+              controls.update();
+              renderer.render(scene, camera);
+            }
+          }
+          animate();
+        })();
+      };
+
+      rest();
 
       return () => {
         animating = false;
