@@ -30,8 +30,11 @@ export default function CineMraft(): JSX.Element {
       const controls = new OrbitControls(camera, renderer.domElement);
       controls.target.set(8, 40, 8);
 
-      const skyboxGeom = new three.SphereGeometry(camera.far, 32, 32)
-      const skyboxMat = new three.MeshBasicMaterial({color: 0x8080ff, side: three.BackSide});
+      const skyboxGeom = new three.SphereGeometry(camera.far, 32, 32);
+      const skyboxMat = new three.MeshBasicMaterial({
+        color: 0x8080ff,
+        side: three.BackSide,
+      });
       const skybox = new three.Mesh(skyboxGeom, skyboxMat);
       scene.add(skybox);
 
@@ -101,7 +104,11 @@ export default function CineMraft(): JSX.Element {
             if (animating) {
               requestAnimationFrame(animate);
               controls.update();
-              skybox.position.set(camera.position.x, camera.position.y, camera.position.z);
+              skybox.position.set(
+                camera.position.x,
+                camera.position.y,
+                camera.position.z
+              );
               renderer.render(scene, camera);
             }
           }
