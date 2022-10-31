@@ -24,12 +24,16 @@ export default function CineMraft(): JSX.Element {
     if (div != null) {
       // Create scene, camera, renderer and orbit controls
       const scene = new three.Scene();
-      scene.fog = new three.Fog(0xffffff, 0, 500);
       const camera = new three.PerspectiveCamera(75, 1, 0.1, 1000);
       camera.position.set(-20, 50, -20);
       const renderer = new three.WebGLRenderer();
       const controls = new OrbitControls(camera, renderer.domElement);
       controls.target.set(8, 40, 8);
+
+      const skyboxGeom = new three.SphereGeometry(camera.far, 32, 32)
+      const skyboxMat = new three.MeshBasicMaterial({color: 0x8080ff, side: three.BackSide});
+      const skybox = new three.Mesh(skyboxGeom, skyboxMat);
+      scene.add(skybox);
 
       // Add the domElement of the renderer to the div
       div.appendChild(renderer.domElement);
@@ -97,6 +101,7 @@ export default function CineMraft(): JSX.Element {
             if (animating) {
               requestAnimationFrame(animate);
               controls.update();
+              skybox.position.set(camera.position.x, camera.position.y, camera.position.z);
               renderer.render(scene, camera);
             }
           }
