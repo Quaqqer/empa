@@ -9,11 +9,11 @@ function vec3Key([x, y, z]: vec3): string {
   return `${x}:${y}:${z}`;
 }
 
+const vec3Regex = /^(-?\d+(?:\.\d+)?):(-?\d+(?:\.\d+)?):(-?\d+(?:\.\d+)?)$/;
+
 function vec3FromKey(s: string): vec3 {
-  const match = /^-?(\d+(?:\.\d+)?):-?(\d+(?:\.\d+)?):-?(\d+(?:\.\d+)?)$/.exec(
-    s
-  );
-  if (match === null) throw Error("Could not create key from string: " + s);
+  const match = vec3Regex.exec(s);
+  if (match === null) throw Error("Could not parse key from string: " + s);
   const [_, x, y, z] = match;
   return [x, y, z].map((v) => Number(v)) as vec3;
 }
@@ -22,7 +22,23 @@ function vec3Add(lhs: vec3, rhs: vec3): vec3 {
   return lhs.map((v, i) => v + rhs[i]) as vec3;
 }
 
-class Chunk {
+export type vec2 = [number, number];
+
+export function vec2Key([x, y]: vec2): string {
+  return `${x}:${y}`;
+}
+
+const vec2Regex = /^(-?\d+(?:\.\d+)?):(-?\d+(?:\.\d+)?)$/;
+
+export function vec2FromKey(s: string): vec2 {
+  const match = vec2Regex.exec(s);
+  if (match === null) throw Error("Could not parse key from string: " + s);
+  const [_, x, y] = match;
+  console.log(s, x, y);
+  return [x, y].map((v) => Number(v)) as vec2;
+}
+
+export class Chunk {
   private map: Map<string, Block>;
 
   constructor() {
@@ -57,6 +73,22 @@ enum BlockId {
   Sand,
   Water,
 }
+
+const blockIds: BlockId[] = [
+  BlockId.Dirt,
+  BlockId.Grass,
+  BlockId.Stone,
+  BlockId.Sand,
+  BlockId.Water,
+];
+
+const colors: Record<BlockId, string> = {
+  [BlockId.Dirt]: "#964b00",
+  [BlockId.Grass]: "#00ff00",
+  [BlockId.Stone]: "#888888",
+  [BlockId.Sand]: "#ffff00",
+  [BlockId.Water]: "#0000ffb0",
+};
 
 class Block {
   constructor(public id: BlockId) {}
@@ -100,14 +132,6 @@ export function generateChunk(
   return chunk;
 }
 
-const colors: Record<BlockId, string> = {
-  [BlockId.Dirt]: "#964b00",
-  [BlockId.Grass]: "#00ff00",
-  [BlockId.Stone]: "#888888",
-  [BlockId.Sand]: "#ffff00",
-  [BlockId.Water]: "#0000ffb0",
-};
-
 const floatColors = Object.fromEntries(
   Object.entries(colors).map(([k, v]) => {
     const cols = _.chunk(v.slice(1), 2).map(
@@ -120,7 +144,11 @@ const floatColors = Object.fromEntries(
   })
 );
 
-export function stitchChunk(chunk: Chunk): three.Group {
+export function stitchChunk(
+  chunk: Chunk,
+  [chunkX, chunkZ]: vec2,
+  chunks: Map<string, Chunk>
+): three.Group {
   const buf = new three.BufferGeometry();
   const verts: number[] = [];
   const cols: number[] = [];
@@ -129,9 +157,24 @@ export function stitchChunk(chunk: Chunk): three.Group {
   const transparentVerts: number[] = [];
   const transparentCols: number[] = [];
 
+  function getBlock([x, y, z]: vec3): Block | undefined {
+    const dx = Math.floor(x / chunkSize);
+    const dz = Math.floor(z / chunkSize);
+    const c =
+      dx === 0 && dz === 0
+        ? chunk
+        : chunks.get(vec2Key([chunkX + dx, chunkZ + dz]));
+
+    return c?.get([
+      ((x % chunkSize) + chunkSize) % chunkSize,
+      y,
+      ((z % chunkSize) + chunkSize) % chunkSize,
+    ]);
+  }
+
   chunk.forEach((b, bp) => {
     for (const face of blockFaces) {
-      const faceNeighbour = chunk.get(vec3Add(bp, faceNormal(face)));
+      const faceNeighbour = getBlock(vec3Add(bp, faceNormal(face)));
 
       if (
         faceNeighbour === undefined ||
@@ -176,6 +219,7 @@ export function stitchChunk(chunk: Chunk): three.Group {
   const transparentMat = new three.MeshBasicMaterial({
     vertexColors: true,
     transparent: true,
+    side: three.DoubleSide,
   });
   const transparentMesh = new three.Mesh(transparentBuf, transparentMat);
 

@@ -1,8 +1,16 @@
+import _ from "lodash";
 import { useEffect, useRef } from "react";
 import * as three from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 
-import { chunkSize, generateChunk, stitchChunk } from "./blocks";
+import {
+  Chunk,
+  chunkSize,
+  generateChunk,
+  stitchChunk,
+  vec2FromKey,
+  vec2Key,
+} from "./blocks";
 
 export default function CineMraft(): JSX.Element {
   const divRef = useRef<HTMLDivElement>(null);
@@ -14,7 +22,7 @@ export default function CineMraft(): JSX.Element {
     if (div != null) {
       // Create scene, camera, renderer and orbit controls
       const scene = new three.Scene();
-      scene.fog = new three.Fog(0xffffff, 0, 500)
+      scene.fog = new three.Fog(0xffffff, 0, 500);
       const camera = new three.PerspectiveCamera(75, 1, 0.1, 1000);
       camera.position.set(-20, 50, -20);
       const renderer = new three.WebGLRenderer();
@@ -27,16 +35,26 @@ export default function CineMraft(): JSX.Element {
       renderer.setSize(800, 800);
 
       // Create chunks
-      for (let x = -4; x < 4; x++) {
-        for (let z = -4; z < 4; z++) {
-          (async (x, z) => {
-            const chunk = generateChunk(1, x, z);
-            const stitchedChunk = stitchChunk(chunk);
-            stitchedChunk.position.set(x * chunkSize, 0, z * chunkSize);
-            scene.add(stitchedChunk);
-          })(x, z);
+      const chunks: Map<string, Chunk> = new Map();
+      for (let x = -3; x < 3; x++) {
+        for (let z = -3; z < 3; z++) {
+          const chunk = generateChunk(1, x, z);
+          chunks.set(vec2Key([x, z]), chunk);
         }
       }
+
+      // Stitch chunks
+      const chunk3Ds: three.Group[] = [];
+      for (const [pos, chunk] of chunks.entries()) {
+        const [cx, cz] = vec2FromKey(pos);
+        const chunk3D = stitchChunk(chunk, [cx, cz], chunks);
+        chunk3D.position.set(cx * chunkSize, 0, cz * chunkSize)
+        chunk3Ds.push(chunk3D);
+      }
+
+      // Add chunks to scene
+      for (const chunk3D of chunk3Ds)
+      scene.add(chunk3D);
 
       scene.add(
         new three.ArrowHelper(
