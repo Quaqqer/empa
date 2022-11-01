@@ -37,7 +37,7 @@ export default function CineMraft(): JSX.Element {
       // Create scene, camera, renderer and orbit controls
       const scene = new three.Scene();
       const camera = new three.PerspectiveCamera(75, 1, 0.1, 1000);
-      camera.position.set(-20, 50, -20);
+      camera.position.set(-50, 100, -40);
       const renderer = new three.WebGLRenderer();
       const controls = new OrbitControls(camera, renderer.domElement);
       controls.target.set(8, 40, 8);
@@ -55,11 +55,13 @@ export default function CineMraft(): JSX.Element {
       // Set the size of the renderer element
       renderer.setSize(800, 800);
 
+      const seed = Math.random();
+
       // Create chunks
       const chunks: Map<string, Chunk> = new Map();
       for (let x = -renderDistance; x < renderDistance; x++) {
         for (let z = -renderDistance; z < renderDistance; z++) {
-          const chunk = generateChunk(1, x, z);
+          const chunk = generateChunk(seed, x, z);
           chunks.set(vec2Key([x, z]), chunk);
         }
       }

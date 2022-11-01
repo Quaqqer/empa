@@ -65,7 +65,7 @@ export class Chunk {
   }
 }
 
-const oceanHeight = 40;
+const oceanHeight = 64;
 
 export const chunkSize = 16;
 
@@ -186,7 +186,7 @@ export function generateChunk(
       const x = dx + chunkX * chunkSize;
       const z = dz + chunkZ * chunkSize;
 
-      const height = Math.round(oceanHeight + 10 * noise2D(x / 100, z / 100));
+      const height = Math.round(oceanHeight + 13 * noise2D(x / 100, z / 100));
 
       for (let y = 0; y < height - 3; y++)
         chunk.set([dx, y, dz], new Block(BlockId.Stone));
