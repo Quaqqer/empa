@@ -8,6 +8,8 @@ import {
   Center,
   chakra,
   CloseButton,
+  FormControl,
+  FormLabel,
   HStack,
   Input,
   Modal,
@@ -16,6 +18,8 @@ import {
   ModalContent,
   ModalHeader,
   ModalOverlay,
+  Stack,
+  Switch,
   Table,
   TableCaption,
   TableContainer,
@@ -51,15 +55,26 @@ export default function Snake({ scores }: SnakeProps): JSX.Element {
   /** The current score in the dialog */
   const [score, setScore] = useState<number | undefined>();
 
+  const [cheat, setCheat] = useState(false);
+
   return (
     <>
       <Wrap justify="center" minWidth="480px">
         <WrapItem>
-          <SnakeGame {...{ game, running: score === undefined }} />
+          <SnakeGame {...{ game, running: score === undefined, cheat }} />
         </WrapItem>
 
         <WrapItem>
-          <SnakeScoreboard {...{ scores }} />
+          <Stack>
+            <SnakeScoreboard {...{ scores }} />
+            <FormControl display="flex" alignItems="center">
+              <FormLabel>Cheat</FormLabel>
+              <Switch
+                isChecked={cheat}
+                onChange={(e) => void setCheat(e.target.checked)}
+              />
+            </FormControl>
+          </Stack>
         </WrapItem>
       </Wrap>
 
@@ -89,12 +104,19 @@ type SnakeCanvasProps = {
 
   /** If the game should be running */
   running: boolean;
+
+  /** If cheat is active */
+  cheat: boolean;
 };
 
 /**
  * A component for the snake game to draw on
  */
-export function SnakeGame({ game, running }: SnakeCanvasProps): JSX.Element {
+export function SnakeGame({
+  game,
+  running,
+  cheat,
+}: SnakeCanvasProps): JSX.Element {
   const { colorMode } = useColorMode();
 
   /** The canvas reference */
@@ -113,6 +135,10 @@ export function SnakeGame({ game, running }: SnakeCanvasProps): JSX.Element {
       }
     }
   }, [game, canvasRef, running]);
+
+  useEffect(() => {
+    game.setCheat(cheat);
+  }, [game, cheat]);
 
   // Reflect global theme
   useEffect(() => {
